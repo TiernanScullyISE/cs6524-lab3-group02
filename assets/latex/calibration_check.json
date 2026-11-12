@@ -1,0 +1,43 @@
+{
+  "numerically_valid": true,
+  "calibration_size": [
+    854,
+    480
+  ],
+  "maximum_roundtrip_error_px": 9.982859928605982e-11,
+  "minimum_distortion_jacobian": 0.9909176325361349,
+  "calibration_transfer_validated": false,
+  "limitation": "Source-camera consistency is not proof of the actual recording camera, lens, crop or stabilisation.",
+  "source_check": {
+    "pattern_inner_corners": [
+      8,
+      5
+    ],
+    "training_views": 20,
+    "heldout_views": 10,
+    "results": [
+      {
+        "model": "current_full_source_fit",
+        "mean_error_px": 0.2984821066260338,
+        "worst_view_error_px": 1.024963617324829
+      },
+      {
+        "model": "two_radial_training_fit",
+        "mean_error_px": 0.27388068214058875,
+        "worst_view_error_px": 1.0231192111968994
+      },
+      {
+        "model": "one_radial_training_fit",
+        "mean_error_px": 0.30339481234550475,
+        "worst_view_error_px": 1.0348738431930542
+      },
+      {
+        "model": "pinhole_training_fit",
+        "mean_error_px": 0.39141029566526414,
+        "worst_view_error_px": 1.0184924602508545
+      }
+    ],
+    "note": "Training fits exclude held-out views. Current K uses all source views. The one-radial model trades ~0.03 px for a non-folding distortion map.",
+    "corners_sha256": "7b402a972f4f69cc3f7af9be54387691926fe58f2ff1f458117cb5e472395f03"
+  }
+}

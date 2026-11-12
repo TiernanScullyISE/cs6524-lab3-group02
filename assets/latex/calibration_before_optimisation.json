@@ -1,0 +1,57 @@
+{
+  "numerically_valid": false,
+  "calibration_size": [
+    854,
+    480
+  ],
+  "maximum_roundtrip_error_px": 9.56373867570816,
+  "minimum_distortion_jacobian": -0.05518399391406072,
+  "calibration_transfer_validated": false,
+  "limitation": "Source-camera consistency is not proof of the actual recording camera, lens, crop or stabilisation.",
+  "source_check": {
+    "pattern_inner_corners": [
+      8,
+      5
+    ],
+    "training_views": 20,
+    "heldout_views": 10,
+    "results": [
+      {
+        "model": "borrowed_all_views_fit",
+        "mean_error_px": 0.2674927361309528,
+        "worst_view_error_px": 1.0175071954727173
+      },
+      {
+        "model": "refit_training_views_only",
+        "mean_error_px": 0.27388048991560937,
+        "worst_view_error_px": 1.0231201648712158
+      }
+    ],
+    "note": "Only the refit excludes held-out views from calibration; the borrowed K used all source views.",
+    "corners_sha256": "7b402a972f4f69cc3f7af9be54387691926fe58f2ff1f458117cb5e472395f03"
+  },
+  "K": [
+    [
+      800.3305,
+      0.0,
+      422.8597
+    ],
+    [
+      0.0,
+      800.115,
+      224.9106
+    ],
+    [
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "D": [
+    0.264184,
+    -0.995237,
+    -0.010203,
+    -0.00402,
+    0.0
+  ]
+}

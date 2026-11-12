@@ -1,6 +1,7 @@
 # Reused at the user's request; not a measured calibration of these recordings.
 calibration_size: [854, 480]
-calibration_source: Lab 2 camera 02, same phone model
+calibration_source: Lab 2 camera 02, one-radial-coefficient refit of 30 source views
 orientation_assumption: portrait frames rotated 90 degrees anticlockwise
 keyframe_step: 10
 min_motion: 0.0
+object_roi: [0.32, 0.23, 0.61, 0.89]
