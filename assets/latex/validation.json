@@ -1,19 +1,31 @@
 {
-  "environment": "cs6524-lab3-local Docker image built from supplied lab01 base",
-  "tests_passed": 7,
+  "environment": "cs6524-lab3-local Docker image",
+  "tests_passed": 14,
   "full_main_exit_code": 0,
-  "cases": 12,
-  "nonempty_finite_ply_files": 12,
+  "selected_method": "SIFT",
+  "cases_attempted": 12,
+  "valid_ply_files": 12,
+  "nonempty_ply_files": 11,
+  "empty_dense_cases": [
+    "b_12d"
+  ],
+  "weak_tracking_cases": [
+    "b_10d",
+    "b_12d"
+  ],
+  "calibration_transfer_validated": false,
   "checks": [
-    "PLY vertex counts and RGB ranges",
-    "orthonormal camera rotations",
+    "finite PLY coordinates and RGB ranges",
+    "orthonormal poses and earliest-camera origin",
     "every consecutive pair attempted",
-    "accepted bundle corrections reduce RMSE"
+    "accepted bundle adjustments reduce RMSE"
   ],
   "limitations": [
-    "Calibration reused from Lab 2 camera 02 by request; not verified for these recordings",
-    "Dense cloud visual checks show noise and background structure; not a clean plug model",
-    "No global loop closure; independent experiment scales are arbitrary",
-    "Report remains the supplied template; no TEAM.md was added"
-  ]
+    "Different retained point sets: residual reduction partly reflects rejection, not ground-truth accuracy.",
+    "Lab 2 source-camera calibration was checked/refitted; transfer to the actual recording camera remains unverified.",
+    "Clouds remain partial and distorted. b_12d has no verified dense depth; b_10d has only four registered views.",
+    "No invented geometry or per-case detector substitution was used to hide failed sensitivity cases."
+  ],
+  "team_file_complete": true,
+  "report_still_template": true
 }

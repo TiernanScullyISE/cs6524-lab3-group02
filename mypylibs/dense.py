@@ -3,12 +3,28 @@ import json
 
 import cv2
 import numpy as np
+from scipy.spatial import cKDTree
 
+from mypylibs.foreground import object_mask
 from mypylibs.sfm import read_frames
-from mypylibs.triangulation import save_ply
+from mypylibs.triangulation import project, save_ply
 
 
-def stereo_points(first, second, pose1, pose2, K, roi):
+def silhouette_votes(points, poses, masks, K):
+    """A real object point should project inside its silhouette in other views."""
+    votes = np.zeros(len(points), dtype=int)
+    for frame, mask in masks.items():
+        pixels, depth = project(points, poses[frame], K)
+        finite = np.isfinite(pixels).all(axis=1)
+        pixels = np.rint(np.nan_to_num(pixels, nan=-1, posinf=-1, neginf=-1)).astype(int)
+        x, y = pixels.T
+        inside = finite & (depth > 0) & (x >= 0) & (x < mask.shape[1]) & (y >= 0) & (y < mask.shape[0])
+        indices = np.flatnonzero(inside)
+        votes[indices] += mask[y[inside], x[inside]] != 0
+    return votes
+
+
+def stereo_points(first, second, pose1, pose2, K, roi, first_mask=None, second_mask=None):
     R = pose2[:, :3] @ pose1[:, :3].T
     t = pose2[:, 3] - R @ pose1[:, 3]
     if np.linalg.norm(t) < 1e-6:
@@ -23,8 +39,8 @@ def stereo_points(first, second, pose1, pose2, K, roi):
     source_mask = np.zeros(first.shape[:2], np.uint8)
     x1, y1, x2, y2 = roi
     source_mask[int(y1 * size[1]):int(y2 * size[1]), int(x1 * size[0]):int(x2 * size[0])] = 255
-    mask1 = cv2.remap(source_mask, *map1, cv2.INTER_NEAREST) != 0
-    mask2 = cv2.remap(source_mask, *map2, cv2.INTER_NEAREST) != 0
+    mask1 = cv2.remap(source_mask if first_mask is None else first_mask, *map1, cv2.INTER_NEAREST) != 0
+    mask2 = cv2.remap(source_mask if second_mask is None else second_mask, *map2, cv2.INTER_NEAREST) != 0
     grey1, grey2 = [cv2.cvtColor(image, cv2.COLOR_BGR2GRAY) for image in (left, right)]
     # SGBM searches along rows; transpose a vertically rectified stereo pair.
     axis = int(abs(p2[1, 3]) > abs(p2[0, 3]))
@@ -47,7 +63,9 @@ def stereo_points(first, second, pose1, pose2, K, roi):
     inside = (target_x >= 0) & (target_x < d1.shape[1])
     target_x = np.clip(target_x, 0, d1.shape[1] - 1)
     # A pixel must match back to its original location, in valid image regions.
-    valid = (inside & mask1 & mask2[y, target_x] & (d1 > minimum) &
+    intensity = grey1.astype(np.float32)
+    variance = cv2.blur(intensity ** 2, (5, 5)) - cv2.blur(intensity, (5, 5)) ** 2
+    valid = (inside & mask1 & mask2[y, target_x] & (d1 > minimum) & (abs(d1) >= 1.5) & (variance > 4) &
              (d2[y, target_x] > reverse_minimum) & (abs(d1 + d2[y, target_x]) < 1.5))
     if axis == 1:
         d1, valid = d1.T.copy(), valid.T
@@ -64,16 +82,43 @@ def stereo_points(first, second, pose1, pose2, K, roi):
 
 def dense_cloud(video_path, K, D, undistort, config, poses, cloud, output_path):
     registered = sorted(int(frame) for frame in poses)
+    sparse = np.asarray(list(cloud.values()))
     # Spread at most 20 dense stereo pairs over the recovered trajectory.
     indices = np.unique(np.linspace(0, len(registered) - 2, min(20, len(registered) - 1), dtype=int))
-    pairs = [(registered[i], registered[i + 1]) for i in indices]
-    needed = {f for pair in pairs for f in pair}
+    pairs = []
+    for i in indices:
+        first, second = registered[i], registered[i + 1]
+        centre1 = -poses[first][:, :3].T @ poses[first][:, 3]
+        ray1 = sparse - centre1
+        for candidate in registered[i + 1:i + 5]:
+            centre2 = -poses[candidate][:, :3].T @ poses[candidate][:, 3]
+            ray2 = sparse - centre2
+            cosine = np.sum(ray1 * ray2, axis=1) / np.maximum(np.linalg.norm(ray1, axis=1) *
+                                                                           np.linalg.norm(ray2, axis=1), 1e-12)
+            angle = np.degrees(np.arccos(np.clip(cosine, -1, 1)))
+            second = candidate
+            if np.median(angle) >= 1.0:
+                break
+        pairs.append((first, second))
+    # Also load neighbouring views for independent silhouette checks.
+    neighbours = {first: registered[max(0, registered.index(first) - 2):registered.index(first) + 4]
+                  for first, _ in pairs}
+    check_frames = [registered[i] for i in np.unique(np.linspace(0, len(registered) - 1,
+                                                               min(10, len(registered)), dtype=int))]
+    needed = ({f for group in neighbours.values() for f in group} |
+              {f for pair in pairs for f in pair} | set(check_frames))
     images = {i: frame for i, frame in enumerate(read_frames(video_path, K, D, undistort)) if i in needed}
+    masks = {i: object_mask(image, config) for i, image in images.items()}
     points, colours, counts = [], [], []
-    sparse = np.asarray(list(cloud.values()))
     for first, second in pairs:
+        # Erosion removes mixed foreground/background pixels at silhouette edges.
+        m1, m2 = [cv2.erode(masks[i], np.ones((3, 3), np.uint8)) for i in (first, second)]
         xyz, rgb = stereo_points(images[first], images[second], poses[first], poses[second],
-                                 K, config.get('roi', [0, 0, 1, 1]))
+                                 K, config.get('roi', [0, 0, 1, 1]), m1, m2)
+        before = len(xyz)
+        votes = silhouette_votes(xyz, poses, {f: masks[f] for f in neighbours[first]}, K)
+        supported = votes >= min(3, len(neighbours[first]))
+        xyz, rgb = xyz[supported], rgb[supported]
         # Bound distant stereo noise using the sparse map's depth in this camera.
         depth = (sparse @ poses[first][:, :3].T + poses[first][:, 3])[:, 2]
         positive = depth[depth > 0]
@@ -83,8 +128,16 @@ def dense_cloud(video_path, K, D, undistort, config, poses, cloud, output_path):
             xyz, rgb = xyz[keep], rgb[keep]
         points.append(xyz)
         colours.append(rgb)
-        counts.append(dict(pair=[first, second], points=len(xyz)))
+        counts.append(dict(pair=[first, second], before_silhouette_check=before, points=len(xyz)))
     xyz, rgb = np.concatenate(points), np.concatenate(colours)
+    before_global = len(xyz)
+    check_masks = {f: masks[f] for f in check_frames}
+    votes = silhouette_votes(xyz, poses, check_masks, K)
+    # Require three spread-out views, rather than a majority of the entire path:
+    # conservative segmentation can omit pins and surfaces in some views.
+    global_support = votes >= min(3, len(check_frames))
+    xyz, rgb = xyz[global_support], rgb[global_support]
+    after_global = len(xyz)
     if len(xyz):
         # Average estimates in the same voxel to merge repeated surface samples.
         voxel_size = max(float(np.median(np.linalg.norm(sparse - np.median(sparse, axis=0), axis=1))) * 0.005, 1e-5)
@@ -92,8 +145,18 @@ def dense_cloud(video_path, K, D, undistort, config, poses, cloud, output_path):
         weights = np.bincount(inverse)
         xyz = np.column_stack([np.bincount(inverse, weights=xyz[:, j]) / weights for j in range(3)])
         rgb = np.column_stack([np.bincount(inverse, weights=rgb[:, j]) / weights for j in range(3)]).astype(np.uint8)
+        # Isolated samples are usually bad disparities, rather than a supported surface.
+        if len(xyz) >= 10:
+            distances = cKDTree(xyz).query(xyz, k=8)[0][:, 1:].mean(axis=1)
+            median = np.median(distances)
+            deviation = np.median(abs(distances - median))
+            keep = distances <= median + 3 * max(1.4826 * deviation, voxel_size)
+            xyz, rgb = xyz[keep], rgb[keep]
     save_ply(output_path, xyz, rgb)
-    result = dict(dense_points=len(xyz), pairs=counts, pixels='all candidates examined in selected pairs; invalid depths rejected')
+    result = dict(dense_points=len(xyz), pairs=counts,
+                  global_check_views=check_frames, before_global_check=before_global,
+                  after_global_check=after_global,
+                  pixels='all candidates examined; foreground masks, multi-view silhouette support and isolated-point rejection applied')
     output_path.with_suffix('.json').write_text(json.dumps(result, indent=2))
     print(f'Step 6: {len(xyz)} dense points saved to {output_path.name}', flush=True)
     return result

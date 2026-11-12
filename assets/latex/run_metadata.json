@@ -4,13 +4,13 @@
   "numpy": "2.5.4",
   "scipy": "1.18.1",
   "seed": 42,
-  "calibration": "Lab 2 camera 02, reused by request",
+  "calibration": "Lab 2 camera 02, one-radial-coefficient refit of 30 source views",
   "hashes": {
     "a.mp4": "0a7d4ba01b6d9ab48cd22a5f401730f284a9214f037d7dfc9521419406f9feea",
     "b.mp4": "7ba05c8d9c6ac333dab591cb32295008dcfe0588d9b9df4652ad1ea7e3062ce5",
-    "K.csv": "4fb2caa4cef8dc7a2240755cbc01963960c449a1472c0c56ecf0195e9a0730eb",
-    "D.csv": "bb3864018124b923637c5ce7db5bb9350f82fc7c751a4a286064dc5ad27f81d0",
-    "a.yaml": "44fa8c881467ed42988f3058064bd394c7904ff11cadd343c15807938ad97fd1",
-    "b.yaml": "7a8d3937b8a6b22262316a2a3498b35584b517059d1f2b678a160fb3697a878f"
+    "K.csv": "bb638f0baed7d0246fb0df74143f6d5b2d9b5abf69a199e790b07aeea791f2a9",
+    "D.csv": "dade39cd72d02e8294531fd64dd9b692909a16668b1c7cdc357dc06c7bb586ed",
+    "a.yaml": "8066f83c247dba34a393cd10a56db3cf33f8956501c5204d16652bfe5ef37d55",
+    "b.yaml": "297c00db8a4cb8c9476a997c39e9bf47bc82c24a57caf861ec9af5d633d22145"
   }
 }

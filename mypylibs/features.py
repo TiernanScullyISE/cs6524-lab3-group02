@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 
 
-METHOD = 'ORB'  # Updated after the measured SIFT/ORB comparison.
+METHOD = 'SIFT'  # End-to-end reconstruction tests favour accuracy over raw match density.
 
 
 def feature_tools(method, nfeatures=2000):
@@ -36,10 +36,10 @@ def track_features(video_path, output_dir, nfeatures=2000, ratio=0.75, method=ME
     Save aligned arrays: frame_pairs (zero-based), track_ids, points1, points2.
     Coordinates are (x, y) pixels in the original frames, ready for Step 3.
 
-    1. Detect points: ORB finds up to 2,000 distinctive points per frame, such as corners and textured areas.
-    2. Describe them: ORB gives each point a binary pattern describing its surroundings.
-    3. Compare consecutive frames: Hamming distance counts how many bits differ between patterns. 
-    Fewer differences suggest a better match.
+    1. Detect up to 2,000 distinctive points per frame, such as corners and textured areas.
+    2. Describe their surroundings: SIFT uses floating-point vectors; ORB uses binary patterns.
+    3. Compare consecutive frames: SIFT uses Euclidean distance, ORB uses Hamming distance.
+    Smaller distances suggest better matches.
     4. Reject uncertain matches: the best match must have less than 75% of the second-best match’s distance. 
     Each current point can only be matched once.
     5. Keep track IDs: matched points inherit their previous ID; new points receive new IDs.

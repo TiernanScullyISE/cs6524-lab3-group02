@@ -1,9 +1,9 @@
 {
-  "selected": "ORB",
+  "selected": "SIFT",
   "seed": 42,
   "nfeatures": 2000,
   "ratio": 0.75,
-  "selection_rule": "Largest mean geometric inlier count across both videos. Speed, inlier fraction and five-frame persistence also reported.",
+  "selection_rule": "Largest mean geometric inlier fraction, with >=50 mean inliers per scene when possible. End-to-end baseline trials validate this accuracy-first choice for the supplied videos.",
   "protocol": "8 evenly spaced groups of 5 consecutive full-resolution frames; F-RANSAC at 1 px. Inliers measure consistency, not ground truth.",
   "results": [
     {
@@ -15,7 +15,7 @@
       "mean_geometric_inliers": 1200.5625,
       "inlier_fraction": 0.9027209925278443,
       "mean_five_frame_tracks": 681.125,
-      "seconds": 0.5336939900007565
+      "seconds": 0.4704044660029467
     },
     {
       "video": "a",
@@ -26,7 +26,7 @@
       "mean_geometric_inliers": 1472.1875,
       "inlier_fraction": 0.9927090357383682,
       "mean_five_frame_tracks": 891.75,
-      "seconds": 1.625927015003981
+      "seconds": 1.3598225729947444
     },
     {
       "video": "b",
@@ -37,7 +37,7 @@
       "mean_geometric_inliers": 789.46875,
       "inlier_fraction": 0.8645494678484651,
       "mean_five_frame_tracks": 435.5,
-      "seconds": 0.5256379269994795
+      "seconds": 0.449666275002528
     },
     {
       "video": "b",
@@ -48,7 +48,7 @@
       "mean_geometric_inliers": 237.0,
       "inlier_fraction": 0.9216186656944951,
       "mean_five_frame_tracks": 161.0,
-      "seconds": 6.329577216994949
+      "seconds": 5.722206711012404
     }
   ]
 }

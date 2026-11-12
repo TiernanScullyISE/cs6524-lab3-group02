@@ -1,26 +1,26 @@
 {
   "a": {
-    "tested_pairs": 537,
-    "pairs_with_points": 271,
+    "tested_pairs": 404,
+    "pairs_with_points": 302,
     "best_pair": {
       "pair": [
-        1203,
-        1204
+        395,
+        396
       ],
-      "points": 1434,
-      "mean_reprojection_px": 0.22892455212851368
+      "points": 1558,
+      "mean_reprojection_px": 0.19507591707216831
     }
   },
   "b": {
-    "tested_pairs": 117,
-    "pairs_with_points": 42,
+    "tested_pairs": 65,
+    "pairs_with_points": 51,
     "best_pair": {
       "pair": [
-        178,
-        179
+        186,
+        187
       ],
-      "points": 358,
-      "mean_reprojection_px": 0.3370875717571178
+      "points": 58,
+      "mean_reprojection_px": 0.11507554059223189
     }
   }
 }

@@ -10,7 +10,8 @@ from mypylibs.sfm import common_points
 def project(points, pose, K):
     camera = points @ pose[:, :3].T + pose[:, 3]
     pixels = camera @ K.T
-    return pixels[:, :2] / np.maximum(pixels[:, 2:3], 1e-9), camera[:, 2]
+    denominator = np.where(abs(pixels[:, 2:3]) > 1e-9, pixels[:, 2:3], 1e-9)
+    return pixels[:, :2] / denominator, camera[:, 2]
 
 
 def triangulate(p1, p2, pose1, pose2, K, max_error=2.0):

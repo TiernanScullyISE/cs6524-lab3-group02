@@ -10,11 +10,17 @@
   ],
   "orientation": "Portrait frames rotated anticlockwise to landscape; assumed alignment with Lab 2 sensor axes",
   "limitation": "Lens mode, focus, stabilisation and crop equivalence have not been verified on these recordings.",
-  "hashes": {
+  "original_hashes": {
     "K.csv": "4fb2caa4cef8dc7a2240755cbc01963960c449a1472c0c56ecf0195e9a0730eb",
     "D.csv": "bb3864018124b923637c5ce7db5bb9350f82fc7c751a4a286064dc5ad27f81d0"
   },
-  "step3": {
+  "hashes": {
+    "K.csv": "bb638f0baed7d0246fb0df74143f6d5b2d9b5abf69a199e790b07aeea791f2a9",
+    "D.csv": "dade39cd72d02e8294531fd64dd9b692909a16668b1c7cdc357dc06c7bb586ed"
+  },
+  "refinement": "One radial coefficient, tangential coefficients retained, k2/k3 fixed to zero; refit to 30 source checkerboard views.",
+  "validation": "20/10 source-view train/holdout comparison and full-field distortion audit, recorded in calibration_check.json.",
+  "step3_before_optimisation": {
     "a": {
       "pairs": 1460,
       "accepted": 537
@@ -23,5 +29,16 @@
       "pairs": 234,
       "accepted": 117
     }
-  }
+  },
+  "step3": {
+    "a": {
+      "pairs": 1460,
+      "accepted": 404
+    },
+    "b": {
+      "pairs": 234,
+      "accepted": 65
+    }
+  },
+  "selected_method": "SIFT"
 }

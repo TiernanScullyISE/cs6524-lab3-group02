@@ -1,0 +1,53 @@
+{
+  "selected": "SIFT",
+  "criterion": "Better median/p90 retained-point reprojection, more dense object points in both scenes, and more registered B views; same calibration and pipeline.",
+  "orb_baselines": [
+    {
+      "case": "a_10u",
+      "method": "ORB",
+      "focal_factor": 1.0,
+      "undistorted": true,
+      "frames": 1461,
+      "accepted_pairs": 539,
+      "registered_views": 147,
+      "sparse_points": 6696,
+      "dense_points": 1586,
+      "median_reprojection_px": 0.7007186268293135,
+      "p90_reprojection_px": 1.5329053571477802
+    },
+    {
+      "case": "b_10u",
+      "method": "ORB",
+      "focal_factor": 1.0,
+      "undistorted": true,
+      "frames": 235,
+      "accepted_pairs": 131,
+      "registered_views": 40,
+      "sparse_points": 561,
+      "dense_points": 33571,
+      "median_reprojection_px": 0.5435679409972681,
+      "p90_reprojection_px": 1.3411330720580856
+    }
+  ],
+  "sift_baselines": [
+    {
+      "video": "a",
+      "method": "SIFT",
+      "registered_views": 147,
+      "sparse_points": 16000,
+      "dense_points": 5103,
+      "median_reprojection_px": 0.3606528714753174,
+      "p90_reprojection_px": 1.0591444744415799
+    },
+    {
+      "video": "b",
+      "method": "SIFT",
+      "registered_views": 56,
+      "sparse_points": 230,
+      "dense_points": 64590,
+      "median_reprojection_px": 0.34171133127740283,
+      "p90_reprojection_px": 0.9381651846139817
+    }
+  ],
+  "limitation": "Different retained point sets; no ground-truth shape accuracy claim."
+}

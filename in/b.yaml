@@ -2,4 +2,6 @@
 # It focuses detection on the plug; small residual background matches still need RANSAC.
 roi: [0.30, 0.18, 0.70, 0.82]
 keyframe_step: 3
+initialisation_frames: 210
 min_motion: 0.4
+object_roi: [0.33, 0.17, 0.68, 0.96]

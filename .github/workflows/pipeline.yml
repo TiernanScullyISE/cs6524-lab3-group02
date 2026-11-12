@@ -18,7 +18,7 @@ jobs:
       - name: Check geometry
         run: |
           docker run --rm -v ${{ github.workspace }}:/workspace \
-            cs6524-lab3 python -m unittest mypylibs.test_geometry mypylibs.test_dense
+            cs6524-lab3 python -m unittest discover -s mypylibs -p 'test_*.py'
 
       - name: Run Python Script (main.py)
         run: |

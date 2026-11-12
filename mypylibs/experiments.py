@@ -57,7 +57,8 @@ def run_experiments(root, method):
         writer.writerows(results)
     inputs = [root / 'in' / name for name in ('a.mp4', 'b.mp4', 'K.csv', 'D.csv', 'a.yaml', 'b.yaml')]
     metadata = dict(python=platform.python_version(), opencv=cv2.__version__, numpy=np.__version__,
-                    scipy=scipy.__version__, seed=42, calibration='Lab 2 camera 02, reused by request',
+                    scipy=scipy.__version__, seed=42,
+                    calibration=yaml.safe_load((root / 'in' / 'a.yaml').read_text())['calibration_source'],
                     hashes={p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in inputs})
     (root / 'out' / 'run_metadata.json').write_text(json.dumps(metadata, indent=2))
     return results
