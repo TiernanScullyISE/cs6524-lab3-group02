@@ -2,8 +2,35 @@ import cv2
 import numpy as np
 
 
-def track_orb(video_path, output_dir, nfeatures=2000, ratio=0.75):
-    """Match ORB points in consecutive frames, keeping IDs while points survive.
+METHOD = 'ORB'  # Updated after the measured SIFT/ORB comparison.
+
+
+def feature_tools(method, nfeatures=2000):
+    """Binary ORB descriptors need Hamming; floating-point SIFT needs L2."""
+    if method == 'ORB':
+        return cv2.ORB_create(nfeatures=nfeatures), cv2.BFMatcher(cv2.NORM_HAMMING)
+    if method == 'SIFT':
+        return cv2.SIFT_create(nfeatures=nfeatures), cv2.BFMatcher(cv2.NORM_L2)
+    raise ValueError(f'Unknown feature method: {method}')
+
+
+def match_points(matcher, previous, current, ratio=0.75):
+    """Reject ambiguous matches and allow only one match per current point."""
+    if previous is None or current is None or len(current) < 2:
+        return []
+    neighbours = matcher.knnMatch(previous, current, k=2)
+    candidates = [pair[0] for pair in neighbours
+                  if len(pair) == 2 and pair[0].distance < ratio * pair[1].distance]
+    matches, used = [], set()
+    for match in sorted(candidates, key=lambda match: match.distance):
+        if match.trainIdx not in used:
+            used.add(match.trainIdx)
+            matches.append(match)
+    return matches
+
+
+def track_features(video_path, output_dir, nfeatures=2000, ratio=0.75, method=METHOD):
+    """Match points in consecutive frames, keeping IDs while points survive.
 
     More features gives denser tracks; a lower ratio rejects more ambiguity.
     Save aligned arrays: frame_pairs (zero-based), track_ids, points1, points2.
@@ -20,8 +47,8 @@ def track_orb(video_path, output_dir, nfeatures=2000, ratio=0.75):
     """
     output_dir.mkdir(parents=True, exist_ok=True)
     video = cv2.VideoCapture(str(video_path))
-    orb = cv2.ORB_create(nfeatures=nfeatures)
-    matcher = cv2.BFMatcher(cv2.NORM_HAMMING)
+    detector, matcher = feature_tools(method, nfeatures)
+    label = method.lower()
     previous_descriptors = None
     next_id = 0
     frame_number = 0
@@ -36,33 +63,22 @@ def track_orb(video_path, output_dir, nfeatures=2000, ratio=0.75):
                 break
             if writer is None:
                 height, width = frame.shape[:2]
-                writer = cv2.VideoWriter(str(output_dir / f'{video_path.stem}_orb.mp4'),
+                writer = cv2.VideoWriter(str(output_dir / f'{video_path.stem}_{label}.mp4'),
                                          cv2.VideoWriter_fourcc(*'mp4v'),
                                          video.get(cv2.CAP_PROP_FPS) or 30, (width, height))
                 if not writer.isOpened():
-                    raise OSError('Could not create the ORB preview video')
+                    raise OSError('Could not create the feature preview video')
             grey = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-            keypoints, descriptors = orb.detectAndCompute(grey, None)
+            keypoints, descriptors = detector.detectAndCompute(grey, None)
             # Every new point gets an ID; matched points inherit their old ID.
             ids = np.arange(next_id, next_id + len(keypoints))
             next_id += len(keypoints)
-            matches = []
-            if previous_descriptors is not None and descriptors is not None and len(descriptors) >= 2:
-                neighbours = matcher.knnMatch(previous_descriptors, descriptors, k=2)
-                # Reject ambiguous matches: the best must beat the second best.
-                candidates = [pair[0] for pair in neighbours
-                              if len(pair) == 2 and pair[0].distance < ratio * pair[1].distance]
-                # Allow only one previous point to claim each current point.
-                used = set()
-                for match in sorted(candidates, key=lambda match: match.distance):
-                    if match.trainIdx in used:
-                        continue
-                    used.add(match.trainIdx)
-                    matches.append(match)
-                    ids[match.trainIdx] = previous_ids[match.queryIdx]
-                    x1, y1 = previous_keypoints[match.queryIdx].pt
-                    x2, y2 = keypoints[match.trainIdx].pt
-                    rows.append((frame_number - 1, ids[match.trainIdx], x1, y1, x2, y2))
+            matches = match_points(matcher, previous_descriptors, descriptors, ratio)
+            for match in matches:
+                ids[match.trainIdx] = previous_ids[match.queryIdx]
+                x1, y1 = previous_keypoints[match.queryIdx].pt
+                x2, y2 = keypoints[match.trainIdx].pt
+                rows.append((frame_number - 1, ids[match.trainIdx], x1, y1, x2, y2))
             if len(matches) > best_count:
                 best_count = len(matches)
                 # Limit the drawing to 80 matches so it remains readable.
@@ -91,17 +107,17 @@ def track_orb(video_path, output_dir, nfeatures=2000, ratio=0.75):
     if frame_number < 2:
         raise ValueError(f'{video_path}: could not read at least two frames')
     if not rows:
-        raise ValueError(f'{video_path}: no ORB matches found')
+        raise ValueError(f'{video_path}: no {method} matches found')
     data = np.asarray(rows)
     frames = data[:, 0].astype(np.int32)
     track_ids = data[:, 1].astype(np.int64)
-    np.savez_compressed(output_dir / f'{video_path.stem}_orb.npz',
+    np.savez_compressed(output_dir / f'{video_path.stem}_{label}.npz',
                         frame_pairs=np.column_stack((frames, frames + 1)),
                         track_ids=track_ids,
                         points1=data[:, 2:4].astype(np.float32),
                         points2=data[:, 4:6].astype(np.float32))
-    if not cv2.imwrite(str(output_dir / f'{video_path.stem}_orb_matches.jpg'), preview):
-        raise OSError('Could not save the ORB match preview')
+    if not cv2.imwrite(str(output_dir / f'{video_path.stem}_{label}_matches.jpg'), preview):
+        raise OSError('Could not save the feature match preview')
     _, lengths = np.unique(track_ids, return_counts=True)
     counts = np.bincount(frames, minlength=frame_number - 1)
     print(f'{video_path.name}: {frame_number} frames, {len(rows)} matches, '
@@ -109,3 +125,8 @@ def track_orb(video_path, output_dir, nfeatures=2000, ratio=0.75):
           f'{counts.min()}/{counts.mean():.1f}/{counts.max()}; '
           f'longest track = {lengths.max() + 1} frames; '
           f'preview frames = {preview_frames}')
+
+
+def track_orb(video_path, output_dir, nfeatures=2000, ratio=0.75):
+    """Keep the original ORB entry point available."""
+    return track_features(video_path, output_dir, nfeatures, ratio, method='ORB')

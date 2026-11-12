@@ -1,0 +1,54 @@
+{
+  "selected": "ORB",
+  "seed": 42,
+  "nfeatures": 2000,
+  "ratio": 0.75,
+  "selection_rule": "Largest mean geometric inlier count across both videos. Speed, inlier fraction and five-frame persistence also reported.",
+  "protocol": "8 evenly spaced groups of 5 consecutive full-resolution frames; F-RANSAC at 1 px. Inliers measure consistency, not ground truth.",
+  "results": [
+    {
+      "video": "a",
+      "method": "ORB",
+      "sampled_frames": 40,
+      "pairs": 32,
+      "mean_matches": 1344.9375,
+      "mean_geometric_inliers": 1214.25,
+      "inlier_fraction": 0.90283005715879,
+      "mean_five_frame_tracks": 698.125,
+      "seconds": 1.3624481000006199
+    },
+    {
+      "video": "a",
+      "method": "SIFT",
+      "sampled_frames": 40,
+      "pairs": 32,
+      "mean_matches": 1507.21875,
+      "mean_geometric_inliers": 1493.125,
+      "inlier_fraction": 0.9906491675478427,
+      "mean_five_frame_tracks": 934.375,
+      "seconds": 1.3067993000149727
+    },
+    {
+      "video": "b",
+      "method": "ORB",
+      "sampled_frames": 40,
+      "pairs": 32,
+      "mean_matches": 671.9375,
+      "mean_geometric_inliers": 575.1875,
+      "inlier_fraction": 0.8560133941028741,
+      "mean_five_frame_tracks": 321.75,
+      "seconds": 0.6447401000186801
+    },
+    {
+      "video": "b",
+      "method": "SIFT",
+      "sampled_frames": 40,
+      "pairs": 32,
+      "mean_matches": 257.96875,
+      "mean_geometric_inliers": 238.21875,
+      "inlier_fraction": 0.9234403391883707,
+      "mean_five_frame_tracks": 159.375,
+      "seconds": 3.9069743999280035
+    }
+  ]
+}
