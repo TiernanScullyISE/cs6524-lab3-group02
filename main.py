@@ -8,6 +8,7 @@ from mypylibs.features import track_features
 from mypylibs.sfm import load_camera, extract_views, estimate_pairs
 from mypylibs.triangulation import two_view_cloud
 from mypylibs.multiview import reconstruct
+from mypylibs.dense import dense_cloud
 
 
 if __name__ == '__main__':
@@ -20,4 +21,6 @@ if __name__ == '__main__':
         views = extract_views(root / 'in' / f'{name}.mp4', K, D, config, method)
         estimate_pairs(views, K, root / 'out' / f'{name}_10u', config.get('min_motion', 0))
         two_view_cloud(views, K, root / 'out' / f'{name}_10u')
-        reconstruct(views, K, config, root / 'out' / f'{name}_10u')
+        poses, cloud = reconstruct(views, K, config, root / 'out' / f'{name}_10u')
+        dense_cloud(root / 'in' / f'{name}.mp4', K, D, True, config,
+                    poses, cloud, root / 'out' / f'{name}_10u.ply')

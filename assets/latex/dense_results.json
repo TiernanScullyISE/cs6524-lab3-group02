@@ -1,0 +1,16 @@
+{
+  "a": {
+    "dense_points": 503708,
+    "dense_pairs": 20,
+    "pairs_with_depth": 18,
+    "min_points_per_pair": 0,
+    "max_points_per_pair": 142852
+  },
+  "b": {
+    "dense_points": 622287,
+    "dense_pairs": 20,
+    "pairs_with_depth": 18,
+    "min_points_per_pair": 0,
+    "max_points_per_pair": 81049
+  }
+}
