@@ -12,5 +12,14 @@
     "D.csv": "dade39cd72d02e8294531fd64dd9b692909a16668b1c7cdc357dc06c7bb586ed",
     "a.yaml": "8066f83c247dba34a393cd10a56db3cf33f8956501c5204d16652bfe5ef37d55",
     "b.yaml": "297c00db8a4cb8c9476a997c39e9bf47bc82c24a57caf861ec9af5d633d22145"
+  },
+  "dense_refinement": {
+    "environment": {
+      "python": "3.14.2",
+      "opencv": "5.0.0",
+      "numpy": "2.5.2"
+    },
+    "cached_sparse_maps": true,
+    "evidence": "assets/latex/depth_refinement_results.json"
   }
 }

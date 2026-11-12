@@ -38,6 +38,29 @@ def silhouette_votes(points, poses, masks, K):
     return votes
 
 
+def depth_votes(points, samples, poses, K, size):
+    """Count stereo maps that independently place a surface at the same depth."""
+    votes = np.zeros(len(points), dtype=int)
+    width, height = size
+    for frame, surface in samples:
+        pixels, depth = project(surface, poses[frame], K)
+        pixels = np.rint(pixels).astype(int)
+        x, y = pixels.T
+        inside = (depth > 0) & (x >= 0) & (x < width) & (y >= 0) & (y < height)
+        image = np.full((height, width), np.inf, np.float32)
+        # Keep the nearest surface when several samples hit the same pixel.
+        np.minimum.at(image, (y[inside], x[inside]), depth[inside])
+        image = cv2.erode(image, np.ones((3, 3), np.uint8))
+        pixels, depth = project(points, poses[frame], K)
+        pixels = np.rint(pixels).astype(int)
+        x, y = pixels.T
+        inside = (depth > 0) & (x >= 0) & (x < width) & (y >= 0) & (y < height)
+        indices = np.flatnonzero(inside)
+        measured = image[y[inside], x[inside]]
+        votes[indices] += abs(measured - depth[inside]) <= 0.02 * depth[inside]
+    return votes
+
+
 def stereo_points(first, second, pose1, pose2, K, roi, first_mask=None, second_mask=None):
     R = pose2[:, :3] @ pose1[:, :3].T
     t = pose2[:, 3] - R @ pose1[:, 3]
@@ -95,6 +118,7 @@ def stereo_points(first, second, pose1, pose2, K, roi, first_mask=None, second_m
 
 
 def dense_cloud(video_path, K, D, undistort, config, poses, cloud, output_path):
+    cv2.setRNGSeed(42)
     registered = sorted(int(frame) for frame in poses)
     sparse = np.asarray(list(cloud.values()))
     # Spread at most 20 dense stereo pairs over the recovered trajectory.
@@ -123,7 +147,7 @@ def dense_cloud(video_path, K, D, undistort, config, poses, cloud, output_path):
               {f for pair in pairs for f in pair} | set(check_frames))
     images = {i: frame for i, frame in enumerate(read_frames(video_path, K, D, undistort)) if i in needed}
     masks = {i: object_mask(image, config) for i, image in images.items()}
-    points, colours, counts = [], [], []
+    points, colours, counts, samples = [], [], [], []
     for first, second in pairs:
         # Erosion removes mixed foreground/background pixels at silhouette edges.
         m1, m2 = [cv2.erode(masks[i], np.ones((3, 3), np.uint8)) for i in (first, second)]
@@ -142,16 +166,22 @@ def dense_cloud(video_path, K, D, undistort, config, poses, cloud, output_path):
             xyz, rgb = xyz[keep], rgb[keep]
         points.append(xyz)
         colours.append(rgb)
+        samples.append((first, xyz))
         counts.append(dict(pair=[first, second], before_silhouette_check=before, points=len(xyz)))
     xyz, rgb = np.concatenate(points), np.concatenate(colours)
     before_global = len(xyz)
     check_masks = {f: masks[f] for f in check_frames}
     votes = silhouette_votes(xyz, poses, check_masks, K)
-    # Require three spread-out views, rather than a majority of the entire path:
-    # conservative segmentation can omit pins and surfaces in some views.
-    global_support = votes >= min(3, len(check_frames))
+    # A majority rejects background seen through only a few overlapping outlines.
+    # Leave room for segmentation to miss thin pins in some views.
+    global_support = votes >= max(1, int(np.ceil(0.6 * len(check_frames))))
     xyz, rgb = xyz[global_support], rgb[global_support]
     after_global = len(xyz)
+    # Silhouettes alone allow floating sheets inside the object outline.
+    # Require another stereo pair to agree within 2% in camera depth.
+    supported = depth_votes(xyz, samples, poses, K, (640, 360)) >= 2
+    xyz, rgb = xyz[supported], rgb[supported]
+    after_depth = len(xyz)
     if len(xyz):
         # Average estimates in the same voxel to merge repeated surface samples.
         voxel_size = max(float(np.median(np.linalg.norm(sparse - np.median(sparse, axis=0), axis=1))) * 0.005, 1e-5)
@@ -164,7 +194,8 @@ def dense_cloud(video_path, K, D, undistort, config, poses, cloud, output_path):
     result = dict(dense_points=len(xyz), pairs=counts,
                   global_check_views=check_frames, before_global_check=before_global,
                   after_global_check=after_global,
-                  pixels='all candidates examined; foreground masks, multi-view silhouette support and isolated-point rejection applied')
+                  after_depth_check=after_depth,
+                  pixels='all candidates examined; foreground masks, silhouette and depth agreement across views, and isolated-point rejection applied')
     output_path.with_suffix('.json').write_text(json.dumps(result, indent=2))
     print(f'Step 6: {len(xyz)} dense points saved to {output_path.name}', flush=True)
     return result

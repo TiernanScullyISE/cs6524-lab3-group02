@@ -1,0 +1,129 @@
+{
+  "environment": {
+    "python": "3.14.2",
+    "opencv": "5.0.0",
+    "numpy": "2.5.2"
+  },
+  "checks": {
+    "nonempty_finite_coloured_clouds": 12,
+    "tests_native": 18,
+    "tests_docker": 18
+  },
+  "protocol": "Cached sparse maps and camera poses; only dense stage rebuilt. Controlled baseline uses the previous dense implementation and the same RNG seed 42.",
+  "changes": [
+    "Require silhouette agreement in 60 percent of sampled views.",
+    "Require depth agreement within 2 percent in at least two stereo maps.",
+    "Reset GrabCut RNG to 42 at the start of each dense case."
+  ],
+  "source_sha256": "ed091b73f3a174ee8f8fdde77bfaf4fa7b3da2a6fbf1b38f62c5221bb3a3b6d0",
+  "cases": [
+    {
+      "case": "a_08u",
+      "dense_points": 3666,
+      "before_silhouette": 18307,
+      "after_silhouette": 11410,
+      "after_depth": 4637
+    },
+    {
+      "case": "a_08d",
+      "dense_points": 6904,
+      "before_silhouette": 29056,
+      "after_silhouette": 17064,
+      "after_depth": 9345
+    },
+    {
+      "case": "a_10u",
+      "dense_points": 14570,
+      "before_silhouette": 27707,
+      "after_silhouette": 24174,
+      "after_depth": 18930
+    },
+    {
+      "case": "a_10d",
+      "dense_points": 15633,
+      "before_silhouette": 32448,
+      "after_silhouette": 26686,
+      "after_depth": 22109
+    },
+    {
+      "case": "a_12u",
+      "dense_points": 854,
+      "before_silhouette": 14398,
+      "after_silhouette": 4905,
+      "after_depth": 1200
+    },
+    {
+      "case": "a_12d",
+      "dense_points": 12101,
+      "before_silhouette": 32100,
+      "after_silhouette": 21448,
+      "after_depth": 17457
+    },
+    {
+      "case": "b_08u",
+      "dense_points": 27030,
+      "before_silhouette": 76998,
+      "after_silhouette": 47169,
+      "after_depth": 29287
+    },
+    {
+      "case": "b_08d",
+      "dense_points": 61364,
+      "before_silhouette": 108070,
+      "after_silhouette": 92159,
+      "after_depth": 63563
+    },
+    {
+      "case": "b_10u",
+      "dense_points": 78455,
+      "before_silhouette": 119757,
+      "after_silhouette": 107450,
+      "after_depth": 84347
+    },
+    {
+      "case": "b_10d",
+      "dense_points": 67837,
+      "before_silhouette": 112381,
+      "after_silhouette": 98106,
+      "after_depth": 71648
+    },
+    {
+      "case": "b_12u",
+      "dense_points": 20358,
+      "before_silhouette": 60837,
+      "after_silhouette": 45382,
+      "after_depth": 22887
+    },
+    {
+      "case": "b_12d",
+      "dense_points": 99215,
+      "before_silhouette": 132482,
+      "after_silhouette": 124407,
+      "after_depth": 104083
+    }
+  ],
+  "controlled_comparisons": [
+    {
+      "case": "a_10u",
+      "before": 20568,
+      "after": 14570,
+      "rejected_fraction": 0.2916180474523532
+    },
+    {
+      "case": "b_10u",
+      "before": 108314,
+      "after": 78455,
+      "rejected_fraction": 0.2756707350850306
+    },
+    {
+      "case": "b_10d",
+      "before": 103828,
+      "after": 67837,
+      "rejected_fraction": 0.34664059791193125
+    }
+  ],
+  "limitations": [
+    "Fewer points do not prove greater physical accuracy. Some real details can be rejected.",
+    "Clouds remain incomplete and distorted, especially video a. Camera poses and sparse geometry were not changed."
+  ]
+}

@@ -8,7 +8,7 @@
     "accepted_pairs": 451,
     "registered_views": 147,
     "sparse_points": 15440,
-    "dense_points": 2431,
+    "dense_points": 3666,
     "median_reprojection_px": 0.2618755267233036,
     "p90_reprojection_px": 0.6794976487213279
   },
@@ -21,7 +21,7 @@
     "accepted_pairs": 458,
     "registered_views": 147,
     "sparse_points": 16199,
-    "dense_points": 4394,
+    "dense_points": 6904,
     "median_reprojection_px": 0.2190832502364231,
     "p90_reprojection_px": 0.5212033837879222
   },
@@ -34,7 +34,7 @@
     "accepted_pairs": 404,
     "registered_views": 147,
     "sparse_points": 16946,
-    "dense_points": 4992,
+    "dense_points": 14570,
     "median_reprojection_px": 0.19541212561037152,
     "p90_reprojection_px": 0.454803393274105
   },
@@ -47,7 +47,7 @@
     "accepted_pairs": 431,
     "registered_views": 147,
     "sparse_points": 16174,
-    "dense_points": 4785,
+    "dense_points": 15633,
     "median_reprojection_px": 0.17997828606027058,
     "p90_reprojection_px": 0.41288209981165425
   },
@@ -60,7 +60,7 @@
     "accepted_pairs": 425,
     "registered_views": 147,
     "sparse_points": 16750,
-    "dense_points": 1094,
+    "dense_points": 854,
     "median_reprojection_px": 0.21979377010035916,
     "p90_reprojection_px": 0.5901503786494211
   },
@@ -73,7 +73,7 @@
     "accepted_pairs": 418,
     "registered_views": 147,
     "sparse_points": 15991,
-    "dense_points": 3982,
+    "dense_points": 12101,
     "median_reprojection_px": 0.20318986485360468,
     "p90_reprojection_px": 0.5004552834765401
   },
@@ -86,7 +86,7 @@
     "accepted_pairs": 65,
     "registered_views": 61,
     "sparse_points": 312,
-    "dense_points": 30623,
+    "dense_points": 27030,
     "median_reprojection_px": 0.262432367165906,
     "p90_reprojection_px": 0.7147621767559944
   },
@@ -99,7 +99,7 @@
     "accepted_pairs": 48,
     "registered_views": 50,
     "sparse_points": 235,
-    "dense_points": 114709,
+    "dense_points": 61364,
     "median_reprojection_px": 0.2541973598897398,
     "p90_reprojection_px": 0.6289415041220833
   },
@@ -112,7 +112,7 @@
     "accepted_pairs": 65,
     "registered_views": 57,
     "sparse_points": 258,
-    "dense_points": 70931,
+    "dense_points": 78455,
     "median_reprojection_px": 0.25309510671612023,
     "p90_reprojection_px": 0.7210714416349601
   },
@@ -125,7 +125,7 @@
     "accepted_pairs": 50,
     "registered_views": 63,
     "sparse_points": 331,
-    "dense_points": 125436,
+    "dense_points": 67837,
     "median_reprojection_px": 0.26125961482382454,
     "p90_reprojection_px": 0.7164541029995336
   },
@@ -138,7 +138,7 @@
     "accepted_pairs": 53,
     "registered_views": 54,
     "sparse_points": 209,
-    "dense_points": 38273,
+    "dense_points": 20358,
     "median_reprojection_px": 0.2853503678285803,
     "p90_reprojection_px": 0.7306670237506228
   },
@@ -151,7 +151,7 @@
     "accepted_pairs": 47,
     "registered_views": 27,
     "sparse_points": 127,
-    "dense_points": 120364,
+    "dense_points": 99215,
     "median_reprojection_px": 0.31941393007954927,
     "p90_reprojection_px": 0.8467794160366603
   }
