@@ -56,14 +56,14 @@
         "frames": 1461,
         "accepted_pairs": 451,
         "registered_views": 147,
-        "sparse_points": 6328,
-        "dense_points": 5224,
-        "median_reprojection_px": 0.5213756708643533,
-        "p90_reprojection_px": 1.3753733184288195
+        "sparse_points": 15440,
+        "dense_points": 2431,
+        "median_reprojection_px": 0.2618755267233036,
+        "p90_reprojection_px": 0.6794976487213279
       },
       "first_registered_frame": 0,
       "last_registered_frame": 1460,
-      "rejected_map_points": 16955,
+      "rejected_map_points": 9213,
       "status": "partial_reconstruction"
     },
     {
@@ -89,14 +89,14 @@
         "frames": 1461,
         "accepted_pairs": 458,
         "registered_views": 147,
-        "sparse_points": 12303,
-        "dense_points": 3489,
-        "median_reprojection_px": 0.5502748039192588,
-        "p90_reprojection_px": 1.3278802028309542
+        "sparse_points": 16199,
+        "dense_points": 4394,
+        "median_reprojection_px": 0.2190832502364231,
+        "p90_reprojection_px": 0.5212033837879222
       },
       "first_registered_frame": 0,
       "last_registered_frame": 1460,
-      "rejected_map_points": 10573,
+      "rejected_map_points": 7599,
       "status": "partial_reconstruction"
     },
     {
@@ -122,14 +122,14 @@
         "frames": 1461,
         "accepted_pairs": 404,
         "registered_views": 147,
-        "sparse_points": 16000,
-        "dense_points": 5103,
-        "median_reprojection_px": 0.3606528714753174,
-        "p90_reprojection_px": 1.0591444744415799
+        "sparse_points": 16946,
+        "dense_points": 4992,
+        "median_reprojection_px": 0.19541212561037152,
+        "p90_reprojection_px": 0.454803393274105
       },
       "first_registered_frame": 0,
       "last_registered_frame": 1460,
-      "rejected_map_points": 7869,
+      "rejected_map_points": 7673,
       "status": "partial_reconstruction"
     },
     {
@@ -155,14 +155,14 @@
         "frames": 1461,
         "accepted_pairs": 431,
         "registered_views": 147,
-        "sparse_points": 13293,
-        "dense_points": 3816,
-        "median_reprojection_px": 0.4777200800590845,
-        "p90_reprojection_px": 1.2615799485594625
+        "sparse_points": 16174,
+        "dense_points": 4785,
+        "median_reprojection_px": 0.17997828606027058,
+        "p90_reprojection_px": 0.41288209981165425
       },
       "first_registered_frame": 0,
       "last_registered_frame": 1460,
-      "rejected_map_points": 9298,
+      "rejected_map_points": 7319,
       "status": "partial_reconstruction"
     },
     {
@@ -188,14 +188,14 @@
         "frames": 1461,
         "accepted_pairs": 425,
         "registered_views": 147,
-        "sparse_points": 10304,
-        "dense_points": 1498,
-        "median_reprojection_px": 0.5972656253513153,
-        "p90_reprojection_px": 1.5633567047775034
+        "sparse_points": 16750,
+        "dense_points": 1094,
+        "median_reprojection_px": 0.21979377010035916,
+        "p90_reprojection_px": 0.5901503786494211
       },
       "first_registered_frame": 0,
       "last_registered_frame": 1460,
-      "rejected_map_points": 12251,
+      "rejected_map_points": 8111,
       "status": "partial_reconstruction"
     },
     {
@@ -221,14 +221,14 @@
         "frames": 1461,
         "accepted_pairs": 418,
         "registered_views": 147,
-        "sparse_points": 14416,
-        "dense_points": 4468,
-        "median_reprojection_px": 0.42756841028655135,
-        "p90_reprojection_px": 1.1451391467234124
+        "sparse_points": 15991,
+        "dense_points": 3982,
+        "median_reprojection_px": 0.20318986485360468,
+        "p90_reprojection_px": 0.5004552834765401
       },
       "first_registered_frame": 0,
       "last_registered_frame": 1460,
-      "rejected_map_points": 8447,
+      "rejected_map_points": 7525,
       "status": "partial_reconstruction"
     },
     {
@@ -253,15 +253,15 @@
         "undistorted": true,
         "frames": 235,
         "accepted_pairs": 65,
-        "registered_views": 62,
-        "sparse_points": 296,
-        "dense_points": 44099,
-        "median_reprojection_px": 0.3320981160256805,
-        "p90_reprojection_px": 0.9448381121513872
+        "registered_views": 61,
+        "sparse_points": 312,
+        "dense_points": 30623,
+        "median_reprojection_px": 0.262432367165906,
+        "p90_reprojection_px": 0.7147621767559944
       },
-      "first_registered_frame": 39,
+      "first_registered_frame": 48,
       "last_registered_frame": 234,
-      "rejected_map_points": 105,
+      "rejected_map_points": 81,
       "status": "partial_reconstruction"
     },
     {
@@ -286,15 +286,15 @@
         "undistorted": false,
         "frames": 235,
         "accepted_pairs": 48,
-        "registered_views": 61,
-        "sparse_points": 242,
-        "dense_points": 84090,
-        "median_reprojection_px": 0.38593794074148713,
-        "p90_reprojection_px": 1.2068119898334175
+        "registered_views": 50,
+        "sparse_points": 235,
+        "dense_points": 114709,
+        "median_reprojection_px": 0.2541973598897398,
+        "p90_reprojection_px": 0.6289415041220833
       },
-      "first_registered_frame": 45,
-      "last_registered_frame": 234,
-      "rejected_map_points": 97,
+      "first_registered_frame": 39,
+      "last_registered_frame": 204,
+      "rejected_map_points": 45,
       "status": "partial_reconstruction"
     },
     {
@@ -319,15 +319,15 @@
         "undistorted": true,
         "frames": 235,
         "accepted_pairs": 65,
-        "registered_views": 56,
-        "sparse_points": 230,
-        "dense_points": 64590,
-        "median_reprojection_px": 0.34171133127740283,
-        "p90_reprojection_px": 0.9381651846139817
+        "registered_views": 57,
+        "sparse_points": 258,
+        "dense_points": 70931,
+        "median_reprojection_px": 0.25309510671612023,
+        "p90_reprojection_px": 0.7210714416349601
       },
-      "first_registered_frame": 42,
+      "first_registered_frame": 39,
       "last_registered_frame": 210,
-      "rejected_map_points": 65,
+      "rejected_map_points": 56,
       "status": "partial_reconstruction"
     },
     {
@@ -352,16 +352,16 @@
         "undistorted": false,
         "frames": 235,
         "accepted_pairs": 50,
-        "registered_views": 4,
-        "sparse_points": 16,
-        "dense_points": 9334,
-        "median_reprojection_px": 0.24581744691851196,
-        "p90_reprojection_px": 1.3304899341208776
+        "registered_views": 63,
+        "sparse_points": 331,
+        "dense_points": 125436,
+        "median_reprojection_px": 0.26125961482382454,
+        "p90_reprojection_px": 0.7164541029995336
       },
-      "first_registered_frame": 48,
-      "last_registered_frame": 57,
-      "rejected_map_points": 5,
-      "status": "weak_partial"
+      "first_registered_frame": 39,
+      "last_registered_frame": 234,
+      "rejected_map_points": 133,
+      "status": "partial_reconstruction"
     },
     {
       "case": "b_12u",
@@ -385,15 +385,15 @@
         "undistorted": true,
         "frames": 235,
         "accepted_pairs": 53,
-        "registered_views": 39,
-        "sparse_points": 180,
-        "dense_points": 57649,
-        "median_reprojection_px": 0.44229845180024907,
-        "p90_reprojection_px": 1.30738054552793
+        "registered_views": 54,
+        "sparse_points": 209,
+        "dense_points": 38273,
+        "median_reprojection_px": 0.2853503678285803,
+        "p90_reprojection_px": 0.7306670237506228
       },
-      "first_registered_frame": 48,
-      "last_registered_frame": 162,
-      "rejected_map_points": 87,
+      "first_registered_frame": 42,
+      "last_registered_frame": 213,
+      "rejected_map_points": 42,
       "status": "partial_reconstruction"
     },
     {
@@ -418,16 +418,16 @@
         "undistorted": false,
         "frames": 235,
         "accepted_pairs": 47,
-        "registered_views": 5,
-        "sparse_points": 17,
-        "dense_points": 0,
-        "median_reprojection_px": 0.4875044022004372,
-        "p90_reprojection_px": 1.7174914350521207
+        "registered_views": 27,
+        "sparse_points": 127,
+        "dense_points": 120364,
+        "median_reprojection_px": 0.31941393007954927,
+        "p90_reprojection_px": 0.8467794160366603
       },
-      "first_registered_frame": 39,
-      "last_registered_frame": 57,
-      "rejected_map_points": 5,
-      "status": "no_verified_dense_depth"
+      "first_registered_frame": 48,
+      "last_registered_frame": 126,
+      "rejected_map_points": 41,
+      "status": "partial_reconstruction"
     }
   ],
   "intermediate_refined_orb": [
@@ -641,13 +641,8 @@
     ],
     "limitation": "Different retained point sets; no ground-truth shape accuracy claim."
   },
-  "empty_dense_cases": [
-    "b_12d"
-  ],
-  "weak_tracking_cases": [
-    "b_10d",
-    "b_12d"
-  ],
+  "empty_dense_cases": [],
+  "weak_tracking_cases": [],
   "calibration_check": "calibration_check.json",
   "discarded_trials": [
     "Foreground-only tracking lost coverage; retained broader tracking ROI and used silhouettes for dense filtering.",
@@ -655,9 +650,9 @@
     "A limited 60-frame initialisation search failed b_08u; extended search used only when the opening region has no verified pair."
   ],
   "limitations": [
-    "Different retained point sets: residual reduction partly reflects rejection, not ground-truth accuracy.",
-    "Lab 2 source-camera calibration was checked/refitted; transfer to the actual recording camera remains unverified.",
-    "Clouds remain partial and distorted. b_12d has no verified dense depth; b_10d has only four registered views.",
-    "No invented geometry or per-case detector substitution was used to hide failed sensitivity cases."
-  ]
+    "Reprojection errors are internal consistency measurements, not ground-truth 3D accuracy.",
+    "Point sets and registered views differ between runs. Clouds remain partial and may contain distortions."
+  ],
+  "quality_followup": "quality_improvement_results.json",
+  "calibration_assumed_correct": true
 }

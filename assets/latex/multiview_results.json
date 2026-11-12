@@ -3,9 +3,10 @@
     "registered_views": 147,
     "first_frame": 0,
     "last_frame": 1460,
-    "points": 16000,
+    "points": 16946,
     "skipped": 0,
-    "rejected_map_points": 7869,
+    "rejected_map_points": 7673,
+    "rejected_associations": 1168,
     "global_adjustment": {
       "frames": [
         0,
@@ -157,22 +158,25 @@
         1460
       ],
       "points": 3000,
-      "before_rmse_px": 7.324900049968324,
-      "after_rmse_px": 7.2146416976330325,
+      "before_rmse_px": 0.6306713198875055,
+      "after_rmse_px": 0.2839134067914959,
       "accepted": true,
       "scope": "global"
     }
   },
   "b": {
-    "registered_views": 56,
-    "first_frame": 42,
+    "registered_views": 57,
+    "first_frame": 39,
     "last_frame": 210,
-    "points": 230,
-    "skipped": 23,
-    "rejected_map_points": 65,
+    "points": 258,
+    "skipped": 22,
+    "rejected_map_points": 56,
+    "rejected_associations": 65,
     "global_adjustment": {
       "frames": [
+        39,
         42,
+        45,
         48,
         51,
         54,
@@ -200,7 +204,6 @@
         120,
         123,
         126,
-        129,
         132,
         135,
         138,
@@ -229,9 +232,9 @@
         207,
         210
       ],
-      "points": 250,
-      "before_rmse_px": 4.669206798532282,
-      "after_rmse_px": 4.5021455721703125,
+      "points": 262,
+      "before_rmse_px": 2.0150808225104444,
+      "after_rmse_px": 1.7983006528395378,
       "accepted": true,
       "scope": "global"
     }

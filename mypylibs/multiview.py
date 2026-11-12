@@ -88,15 +88,50 @@ def prune_map(views, poses, cloud, K):
             np.median(values) < 1.5 and np.percentile(values, 90) < 3.0}
 
 
-def reconstruct(views, K, config, output_dir):
+def refine_points(views, poses, cloud, K):
+    """Retriangulate all landmarks after camera adjustment, including uncapped points."""
+    observations = {}
+    for frame, pose in poses.items():
+        for track, pixel in zip(views[frame]['ids'], views[frame]['points']):
+            if track in cloud:
+                observations.setdefault(int(track), []).append((pose, pixel))
+    refined = dict(cloud)
+    for track, rows in observations.items():
+        if len(rows) < 3:
+            continue
+        cameras = np.array([K @ pose for pose, _ in rows])
+        pixels = np.array([pixel for _, pixel in rows])
+        equations = np.concatenate((pixels[:, 0, None] * cameras[:, 2] - cameras[:, 0],
+                                     pixels[:, 1, None] * cameras[:, 2] - cameras[:, 1]))
+
+        def fit(indices):
+            matrix = equations[np.r_[indices, indices + len(rows)]]
+            homogeneous = np.linalg.svd(matrix, full_matrices=False)[2][-1]
+            return homogeneous[:3] / homogeneous[3] if abs(homogeneous[3]) > 1e-10 else cloud[track]
+
+        def errors(point):
+            q = cameras @ np.r_[point, 1.0]
+            return np.where(q[:, 2] > 0, np.linalg.norm(q[:, :2] / np.maximum(q[:, 2:3], 1e-9) - pixels, axis=1), 1e6)
+
+        candidates = [cloud[track], fit(np.arange(len(rows)))]
+        for point in list(candidates):
+            inliers = np.flatnonzero(errors(point) < 3.0)
+            if len(inliers) >= 3:
+                candidates.append(fit(inliers))
+        refined[track] = min(candidates, key=lambda p: np.median(errors(p)) + 0.25 * np.percentile(errors(p), 90))
+    return refined
+
+
+def _reconstruct_once(views, K, config, output_dir):
     step = config.get('keyframe_step', 5)
     origin = np.column_stack((np.eye(3), np.zeros(3)))
     poses, cloud, corrections = {}, {}, []
     # Bootstrap with sufficient baseline; never join independent unit-scale pairs.
     best = None
     search_frames = config.get('initialisation_frames', 60)
-    for first in range(0, min(len(views) - step, search_frames), step):
-        if first >= 60 and best is not None:
+    start = config.get('initialisation_start', 0)
+    for first in range(start, min(len(views) - step, search_frames), step):
+        if first >= start + 60 and best is not None:
             break  # Keep a verified opening pair; search later only if needed.
         for second in range(first + step, min(first + 5 * step, len(views)), step):
             ids, p1, p2 = common_points(views[first], views[second])
@@ -132,6 +167,8 @@ def reconstruct(views, K, config, output_dir):
         raise ValueError('No multi-view verified bootstrap; inspect calibration, ROI and texture')
     _, first, second, camera, cloud = best
     poses = {first: origin.copy(), second: camera}
+    next_id = 1 + max(int(v['ids'].max()) for v in views if len(v['ids']))
+    rejected_associations = 0
     last = max(poses)
     skipped = []
     order = list(range(last + step, len(views), step)) + list(range(first - step, -1, -step))
@@ -146,17 +183,19 @@ def reconstruct(views, K, config, output_dir):
         # recover a point whose consecutive-frame track was briefly lost.
         norm = cv2.NORM_HAMMING if view['descriptors'].dtype == np.uint8 else cv2.NORM_L2
         matches = match_points(cv2.BFMatcher(norm), views[last]['descriptors'], view['descriptors'])
-        claimed = set(view['ids'])
+        proposed_ids = view['ids'].copy()
+        claimed = set(proposed_ids)
         for match in matches:
             track = views[last]['ids'][match.queryIdx]
-            if track in cloud and (track not in claimed or view['ids'][match.trainIdx] == track):
-                view['ids'][match.trainIdx] = track
+            if track in cloud and (track not in claimed or proposed_ids[match.trainIdx] == track):
+                proposed_ids[match.trainIdx] = track
                 claimed.add(track)
-        known = [(cloud[int(t)], p) for t, p in zip(view['ids'], view['points']) if t in cloud]
+        known = [(i, int(t), cloud[int(t)], p) for i, (t, p) in
+                 enumerate(zip(proposed_ids, view['points'])) if t in cloud]
         if len(known) < 8:
             skipped.append(frame)
             continue
-        objects, pixels = map(np.asarray, zip(*known))
+        indices, tracks, objects, pixels = map(np.asarray, zip(*known))
         ok, rvec, tvec, inliers = cv2.solvePnPRansac(objects, pixels, K, None,
                                                    iterationsCount=100, reprojectionError=2.0,
                                                    confidence=0.999, flags=cv2.SOLVEPNP_EPNP)
@@ -166,6 +205,19 @@ def reconstruct(views, K, config, output_dir):
         rvec, tvec = cv2.solvePnPRefineLM(objects[inliers.ravel()], pixels[inliers.ravel()],
                                          K, None, rvec, tvec)
         camera = np.column_stack((cv2.Rodrigues(rvec)[0], tvec.ravel()))
+        projected, depth = project(objects, camera, K)
+        verified = (depth > 0) & (np.linalg.norm(projected - pixels, axis=1) < 2.0)
+        if verified.sum() < 8:
+            skipped.append(frame)
+            continue
+        # Only geometrically verified associations may constrain later bundle adjustment.
+        for index, track, good in zip(indices, tracks, verified):
+            if good:
+                view['ids'][index] = track
+            elif view['ids'][index] in cloud:
+                view['ids'][index] = next_id
+                next_id += 1
+                rejected_associations += 1
         poses[frame] = camera
         ids, p1, p2 = common_points(views[last], view)
         points, keep, _ = triangulate(p1, p2, poses[last], camera, K)
@@ -185,6 +237,7 @@ def reconstruct(views, K, config, output_dir):
         global_correction['scope'] = 'global'
         corrections.append(global_correction)
     before_pruning = len(cloud)
+    cloud = refine_points(views, poses, cloud, K)
     cloud = prune_map(views, poses, cloud, K)
     if len(cloud) < 10:
         raise ValueError('Too few multi-view supported points after map verification')
@@ -200,8 +253,49 @@ def reconstruct(views, K, config, output_dir):
     save_ply(output_dir / 'sparse.ply', list(cloud.values()))
     summary = dict(registered_frames=frames, skipped_frames=skipped, points=len(cloud),
                    bundle_adjustments=corrections, rejected_map_points=before_pruning - len(cloud),
+                   rejected_associations=rejected_associations,
+                   initialisation_start=start,
                    scale='arbitrary monocular units')
     (output_dir / 'multiview.json').write_text(json.dumps(summary, indent=2))
     print(f'Step 5: {len(poses)} registered views, {len(cloud)} points, '
           f'{len(corrections)} bundle adjustments', flush=True)
+    return poses, cloud
+
+
+def reconstruct(views, K, config, output_dir):
+    """If tracking collapses early, try later initial regions; keep the best map."""
+    original_ids = [view['ids'].copy() for view in views]
+    best = None
+    failure = 'No reliable initialisation'
+    limit = min(len(views) - config.get('keyframe_step', 5), config.get('initialisation_frames', 60))
+    attempts = []
+    for start in range(0, limit, 60):
+        for view, ids in zip(views, original_ids):
+            view['ids'] = ids.copy()
+        if start:
+            cv2.setRNGSeed(42)
+        trial_dir = output_dir / f'initialise_{start:03d}'
+        trial_dir.mkdir(parents=True, exist_ok=True)
+        try:
+            poses, cloud = _reconstruct_once(views, K, dict(config, initialisation_start=start), trial_dir)
+        except ValueError as error:
+            failure = str(error)
+            attempts.append(dict(start=start, failure=failure))
+            continue
+        attempts.append(dict(start=start, registered_views=len(poses), points=len(cloud)))
+        score = (len(poses), len(cloud))
+        if best is None or score > best[0]:
+            best = (score, poses, cloud, trial_dir, [v['ids'].copy() for v in views])
+        if len(poses) >= 8:
+            break
+    if best is None:
+        raise ValueError(failure)
+    _, poses, cloud, trial_dir, ids = best
+    for view, tracks in zip(views, ids):
+        view['ids'] = tracks
+    for name in ('map.npz', 'sparse.ply', 'multiview.json'):
+        (output_dir / name).write_bytes((trial_dir / name).read_bytes())
+    summary = json.loads((output_dir / 'multiview.json').read_text())
+    summary['initialisation_attempts'] = attempts
+    (output_dir / 'multiview.json').write_text(json.dumps(summary, indent=2))
     return poses, cloud

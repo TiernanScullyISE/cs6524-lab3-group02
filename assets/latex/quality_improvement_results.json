@@ -1,0 +1,509 @@
+{
+  "baseline_commit": "3b677eb",
+  "baseline_environment": {
+    "python": "3.15.2",
+    "opencv": "5.0.0",
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "seed": 42,
+    "calibration": "Lab 2 camera 02, one-radial-coefficient refit of 30 source views",
+    "hashes": {
+      "a.mp4": "0a7d4ba01b6d9ab48cd22a5f401730f284a9214f037d7dfc9521419406f9feea",
+      "b.mp4": "7ba05c8d9c6ac333dab591cb32295008dcfe0588d9b9df4652ad1ea7e3062ce5",
+      "K.csv": "bb638f0baed7d0246fb0df74143f6d5b2d9b5abf69a199e790b07aeea791f2a9",
+      "D.csv": "dade39cd72d02e8294531fd64dd9b692909a16668b1c7cdc357dc06c7bb586ed",
+      "a.yaml": "8066f83c247dba34a393cd10a56db3cf33f8956501c5204d16652bfe5ef37d55",
+      "b.yaml": "297c00db8a4cb8c9476a997c39e9bf47bc82c24a57caf861ec9af5d633d22145"
+    }
+  },
+  "updated_environment": {
+    "python": "3.15.2",
+    "opencv": "5.0.0",
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "seed": 42,
+    "calibration": "Lab 2 camera 02, one-radial-coefficient refit of 30 source views",
+    "hashes": {
+      "a.mp4": "0a7d4ba01b6d9ab48cd22a5f401730f284a9214f037d7dfc9521419406f9feea",
+      "b.mp4": "7ba05c8d9c6ac333dab591cb32295008dcfe0588d9b9df4652ad1ea7e3062ce5",
+      "K.csv": "bb638f0baed7d0246fb0df74143f6d5b2d9b5abf69a199e790b07aeea791f2a9",
+      "D.csv": "dade39cd72d02e8294531fd64dd9b692909a16668b1c7cdc357dc06c7bb586ed",
+      "a.yaml": "8066f83c247dba34a393cd10a56db3cf33f8956501c5204d16652bfe5ef37d55",
+      "b.yaml": "297c00db8a4cb8c9476a997c39e9bf47bc82c24a57caf861ec9af5d633d22145"
+    }
+  },
+  "calibration_assumed_correct": true,
+  "input_hashes_unchanged": true,
+  "tests_passed": 17,
+  "cases": [
+    {
+      "case": "a_08u",
+      "before": {
+        "case": "a_08u",
+        "method": "SIFT",
+        "focal_factor": 0.8,
+        "undistorted": true,
+        "frames": 1461,
+        "accepted_pairs": 451,
+        "registered_views": 147,
+        "sparse_points": 6328,
+        "dense_points": 5224,
+        "median_reprojection_px": 0.5213756708643533,
+        "p90_reprojection_px": 1.3753733184288195
+      },
+      "after": {
+        "case": "a_08u",
+        "method": "SIFT",
+        "focal_factor": 0.8,
+        "undistorted": true,
+        "frames": 1461,
+        "accepted_pairs": 451,
+        "registered_views": 147,
+        "sparse_points": 15440,
+        "dense_points": 2431,
+        "median_reprojection_px": 0.2618755267233036,
+        "p90_reprojection_px": 0.6794976487213279
+      },
+      "rejected_associations": 3056,
+      "initialisation_attempts": [
+        {
+          "start": 0,
+          "registered_views": 147,
+          "points": 15440
+        }
+      ]
+    },
+    {
+      "case": "a_08d",
+      "before": {
+        "case": "a_08d",
+        "method": "SIFT",
+        "focal_factor": 0.8,
+        "undistorted": false,
+        "frames": 1461,
+        "accepted_pairs": 458,
+        "registered_views": 147,
+        "sparse_points": 12303,
+        "dense_points": 3489,
+        "median_reprojection_px": 0.5502748039192588,
+        "p90_reprojection_px": 1.3278802028309542
+      },
+      "after": {
+        "case": "a_08d",
+        "method": "SIFT",
+        "focal_factor": 0.8,
+        "undistorted": false,
+        "frames": 1461,
+        "accepted_pairs": 458,
+        "registered_views": 147,
+        "sparse_points": 16199,
+        "dense_points": 4394,
+        "median_reprojection_px": 0.2190832502364231,
+        "p90_reprojection_px": 0.5212033837879222
+      },
+      "rejected_associations": 1076,
+      "initialisation_attempts": [
+        {
+          "start": 0,
+          "registered_views": 147,
+          "points": 16199
+        }
+      ]
+    },
+    {
+      "case": "a_10u",
+      "before": {
+        "case": "a_10u",
+        "method": "SIFT",
+        "focal_factor": 1.0,
+        "undistorted": true,
+        "frames": 1461,
+        "accepted_pairs": 404,
+        "registered_views": 147,
+        "sparse_points": 16000,
+        "dense_points": 5103,
+        "median_reprojection_px": 0.3606528714753174,
+        "p90_reprojection_px": 1.0591444744415799
+      },
+      "after": {
+        "case": "a_10u",
+        "method": "SIFT",
+        "focal_factor": 1.0,
+        "undistorted": true,
+        "frames": 1461,
+        "accepted_pairs": 404,
+        "registered_views": 147,
+        "sparse_points": 16946,
+        "dense_points": 4992,
+        "median_reprojection_px": 0.19541212561037152,
+        "p90_reprojection_px": 0.454803393274105
+      },
+      "rejected_associations": 1168,
+      "initialisation_attempts": [
+        {
+          "start": 0,
+          "registered_views": 147,
+          "points": 16946
+        }
+      ]
+    },
+    {
+      "case": "a_10d",
+      "before": {
+        "case": "a_10d",
+        "method": "SIFT",
+        "focal_factor": 1.0,
+        "undistorted": false,
+        "frames": 1461,
+        "accepted_pairs": 431,
+        "registered_views": 147,
+        "sparse_points": 13293,
+        "dense_points": 3816,
+        "median_reprojection_px": 0.4777200800590845,
+        "p90_reprojection_px": 1.2615799485594625
+      },
+      "after": {
+        "case": "a_10d",
+        "method": "SIFT",
+        "focal_factor": 1.0,
+        "undistorted": false,
+        "frames": 1461,
+        "accepted_pairs": 431,
+        "registered_views": 147,
+        "sparse_points": 16174,
+        "dense_points": 4785,
+        "median_reprojection_px": 0.17997828606027058,
+        "p90_reprojection_px": 0.41288209981165425
+      },
+      "rejected_associations": 794,
+      "initialisation_attempts": [
+        {
+          "start": 0,
+          "registered_views": 147,
+          "points": 16174
+        }
+      ]
+    },
+    {
+      "case": "a_12u",
+      "before": {
+        "case": "a_12u",
+        "method": "SIFT",
+        "focal_factor": 1.2,
+        "undistorted": true,
+        "frames": 1461,
+        "accepted_pairs": 425,
+        "registered_views": 147,
+        "sparse_points": 10304,
+        "dense_points": 1498,
+        "median_reprojection_px": 0.5972656253513153,
+        "p90_reprojection_px": 1.5633567047775034
+      },
+      "after": {
+        "case": "a_12u",
+        "method": "SIFT",
+        "focal_factor": 1.2,
+        "undistorted": true,
+        "frames": 1461,
+        "accepted_pairs": 425,
+        "registered_views": 147,
+        "sparse_points": 16750,
+        "dense_points": 1094,
+        "median_reprojection_px": 0.21979377010035916,
+        "p90_reprojection_px": 0.5901503786494211
+      },
+      "rejected_associations": 1706,
+      "initialisation_attempts": [
+        {
+          "start": 0,
+          "registered_views": 147,
+          "points": 16750
+        }
+      ]
+    },
+    {
+      "case": "a_12d",
+      "before": {
+        "case": "a_12d",
+        "method": "SIFT",
+        "focal_factor": 1.2,
+        "undistorted": false,
+        "frames": 1461,
+        "accepted_pairs": 418,
+        "registered_views": 147,
+        "sparse_points": 14416,
+        "dense_points": 4468,
+        "median_reprojection_px": 0.42756841028655135,
+        "p90_reprojection_px": 1.1451391467234124
+      },
+      "after": {
+        "case": "a_12d",
+        "method": "SIFT",
+        "focal_factor": 1.2,
+        "undistorted": false,
+        "frames": 1461,
+        "accepted_pairs": 418,
+        "registered_views": 147,
+        "sparse_points": 15991,
+        "dense_points": 3982,
+        "median_reprojection_px": 0.20318986485360468,
+        "p90_reprojection_px": 0.5004552834765401
+      },
+      "rejected_associations": 1090,
+      "initialisation_attempts": [
+        {
+          "start": 0,
+          "registered_views": 147,
+          "points": 15991
+        }
+      ]
+    },
+    {
+      "case": "b_08u",
+      "before": {
+        "case": "b_08u",
+        "method": "SIFT",
+        "focal_factor": 0.8,
+        "undistorted": true,
+        "frames": 235,
+        "accepted_pairs": 65,
+        "registered_views": 62,
+        "sparse_points": 296,
+        "dense_points": 44099,
+        "median_reprojection_px": 0.3320981160256805,
+        "p90_reprojection_px": 0.9448381121513872
+      },
+      "after": {
+        "case": "b_08u",
+        "method": "SIFT",
+        "focal_factor": 0.8,
+        "undistorted": true,
+        "frames": 235,
+        "accepted_pairs": 65,
+        "registered_views": 61,
+        "sparse_points": 312,
+        "dense_points": 30623,
+        "median_reprojection_px": 0.262432367165906,
+        "p90_reprojection_px": 0.7147621767559944
+      },
+      "rejected_associations": 105,
+      "initialisation_attempts": [
+        {
+          "start": 0,
+          "registered_views": 61,
+          "points": 312
+        }
+      ]
+    },
+    {
+      "case": "b_08d",
+      "before": {
+        "case": "b_08d",
+        "method": "SIFT",
+        "focal_factor": 0.8,
+        "undistorted": false,
+        "frames": 235,
+        "accepted_pairs": 48,
+        "registered_views": 61,
+        "sparse_points": 242,
+        "dense_points": 84090,
+        "median_reprojection_px": 0.38593794074148713,
+        "p90_reprojection_px": 1.2068119898334175
+      },
+      "after": {
+        "case": "b_08d",
+        "method": "SIFT",
+        "focal_factor": 0.8,
+        "undistorted": false,
+        "frames": 235,
+        "accepted_pairs": 48,
+        "registered_views": 50,
+        "sparse_points": 235,
+        "dense_points": 114709,
+        "median_reprojection_px": 0.2541973598897398,
+        "p90_reprojection_px": 0.6289415041220833
+      },
+      "rejected_associations": 76,
+      "initialisation_attempts": [
+        {
+          "start": 0,
+          "registered_views": 50,
+          "points": 235
+        }
+      ]
+    },
+    {
+      "case": "b_10u",
+      "before": {
+        "case": "b_10u",
+        "method": "SIFT",
+        "focal_factor": 1.0,
+        "undistorted": true,
+        "frames": 235,
+        "accepted_pairs": 65,
+        "registered_views": 56,
+        "sparse_points": 230,
+        "dense_points": 64590,
+        "median_reprojection_px": 0.34171133127740283,
+        "p90_reprojection_px": 0.9381651846139817
+      },
+      "after": {
+        "case": "b_10u",
+        "method": "SIFT",
+        "focal_factor": 1.0,
+        "undistorted": true,
+        "frames": 235,
+        "accepted_pairs": 65,
+        "registered_views": 57,
+        "sparse_points": 258,
+        "dense_points": 70931,
+        "median_reprojection_px": 0.25309510671612023,
+        "p90_reprojection_px": 0.7210714416349601
+      },
+      "rejected_associations": 65,
+      "initialisation_attempts": [
+        {
+          "start": 0,
+          "registered_views": 57,
+          "points": 258
+        }
+      ]
+    },
+    {
+      "case": "b_10d",
+      "before": {
+        "case": "b_10d",
+        "method": "SIFT",
+        "focal_factor": 1.0,
+        "undistorted": false,
+        "frames": 235,
+        "accepted_pairs": 50,
+        "registered_views": 4,
+        "sparse_points": 16,
+        "dense_points": 9334,
+        "median_reprojection_px": 0.24581744691851196,
+        "p90_reprojection_px": 1.3304899341208776
+      },
+      "after": {
+        "case": "b_10d",
+        "method": "SIFT",
+        "focal_factor": 1.0,
+        "undistorted": false,
+        "frames": 235,
+        "accepted_pairs": 50,
+        "registered_views": 63,
+        "sparse_points": 331,
+        "dense_points": 125436,
+        "median_reprojection_px": 0.26125961482382454,
+        "p90_reprojection_px": 0.7164541029995336
+      },
+      "rejected_associations": 93,
+      "initialisation_attempts": [
+        {
+          "start": 0,
+          "registered_views": 4,
+          "points": 19
+        },
+        {
+          "start": 60,
+          "registered_views": 63,
+          "points": 331
+        }
+      ]
+    },
+    {
+      "case": "b_12u",
+      "before": {
+        "case": "b_12u",
+        "method": "SIFT",
+        "focal_factor": 1.2,
+        "undistorted": true,
+        "frames": 235,
+        "accepted_pairs": 53,
+        "registered_views": 39,
+        "sparse_points": 180,
+        "dense_points": 57649,
+        "median_reprojection_px": 0.44229845180024907,
+        "p90_reprojection_px": 1.30738054552793
+      },
+      "after": {
+        "case": "b_12u",
+        "method": "SIFT",
+        "focal_factor": 1.2,
+        "undistorted": true,
+        "frames": 235,
+        "accepted_pairs": 53,
+        "registered_views": 54,
+        "sparse_points": 209,
+        "dense_points": 38273,
+        "median_reprojection_px": 0.2853503678285803,
+        "p90_reprojection_px": 0.7306670237506228
+      },
+      "rejected_associations": 78,
+      "initialisation_attempts": [
+        {
+          "start": 0,
+          "registered_views": 54,
+          "points": 209
+        }
+      ]
+    },
+    {
+      "case": "b_12d",
+      "before": {
+        "case": "b_12d",
+        "method": "SIFT",
+        "focal_factor": 1.2,
+        "undistorted": false,
+        "frames": 235,
+        "accepted_pairs": 47,
+        "registered_views": 5,
+        "sparse_points": 17,
+        "dense_points": 0,
+        "median_reprojection_px": 0.4875044022004372,
+        "p90_reprojection_px": 1.7174914350521207
+      },
+      "after": {
+        "case": "b_12d",
+        "method": "SIFT",
+        "focal_factor": 1.2,
+        "undistorted": false,
+        "frames": 235,
+        "accepted_pairs": 47,
+        "registered_views": 27,
+        "sparse_points": 127,
+        "dense_points": 120364,
+        "median_reprojection_px": 0.31941393007954927,
+        "p90_reprojection_px": 0.8467794160366603
+      },
+      "rejected_associations": 76,
+      "initialisation_attempts": [
+        {
+          "start": 0,
+          "registered_views": 4,
+          "points": 19
+        },
+        {
+          "start": 60,
+          "registered_views": 27,
+          "points": 127
+        }
+      ]
+    }
+  ],
+  "changes": [
+    "Only geometrically verified 2D/3D associations enter bundle adjustment.",
+    "Retriangulate all landmarks after camera adjustments, including points outside the BA cap.",
+    "Retry later initial regions only when tracking has fewer than eight registered views.",
+    "Remove distant outlier islands around the single masked object."
+  ],
+  "limitations": [
+    "Reprojection errors are internal consistency measurements, not ground-truth 3D accuracy.",
+    "Point sets and registered views differ between runs. Clouds remain partial and may contain distortions."
+  ],
+  "source_hashes": {
+    "multiview.py": "f154d9edecfe5727e9c2fec083df7ddbd8588acbc62cfffecfe02b34a7e5a06e",
+    "dense.py": "4d78e9436609272188cb10d4e020654657574d35557e7b0da96618dbe2dcaba1",
+    "test_optimisation.py": "6665242310e6346a4b7075fcce6965c36dba75f6e17fd2003c5b0176de108792"
+  }
+}

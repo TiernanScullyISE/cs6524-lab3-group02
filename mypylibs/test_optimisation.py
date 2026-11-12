@@ -7,9 +7,9 @@ import cv2
 import numpy as np
 
 from mypylibs.calibration_check import audit_calibration
-from mypylibs.dense import silhouette_votes, stereo_points
+from mypylibs.dense import remove_outliers, silhouette_votes, stereo_points
 from mypylibs.foreground import object_mask
-from mypylibs.multiview import prune_map, reconstruct
+from mypylibs.multiview import prune_map, reconstruct, refine_points
 from mypylibs.triangulation import project
 
 
@@ -73,6 +73,46 @@ class OptimisationTests(unittest.TestCase):
         votes = silhouette_votes(np.array([[0., 0, 5], [1., 0, 5], [0., 0, -5]]),
                                   {0: pose, 1: pose, 2: pose}, {i: mask for i in range(3)}, K)
         np.testing.assert_array_equal(votes, [3, 0, 0])
+
+    def test_all_landmarks_are_retriangulated_after_camera_updates(self):
+        K = np.array([[600., 0, 320], [0, 600, 180], [0, 0, 1]])
+        points = np.array([[0., 0., 5.], [0.1, 0.1, 6.], [-0.1, 0.2, 7.]])
+        poses, views = {}, []
+        for i in range(6):
+            poses[i] = np.column_stack((np.eye(3), [-0.2 * i, 0., 0.]))
+            views.append(dict(ids=np.arange(3), points=project(points, poses[i], K)[0]))
+        cloud = dict(enumerate(points + [0.2, 0.1, 0.3]))
+        corrected = refine_points(views, poses, cloud, K)
+        np.testing.assert_allclose(np.array([corrected[i] for i in range(3)]), points, atol=1e-6)
+
+    def test_dense_distant_island_is_removed_without_trimming_the_main_object(self):
+        rng = np.random.default_rng(42)
+        body = rng.uniform(-1, 1, (2000, 3))
+        island = rng.uniform(-0.02, 0.02, (100, 3)) + [0, 0, 20]
+        points = np.vstack((body, island))
+        kept, colours = remove_outliers(points, np.full(points.shape, 180, np.uint8), 0.01)
+        self.assertGreater(len(kept), 1800)
+        self.assertLess(kept[:, 2].max(), 2)
+        self.assertEqual(kept.shape, colours.shape)
+
+    def test_rejected_pnp_matches_do_not_enter_bundle_adjustment(self):
+        cv2.setRNGSeed(42)
+        rng = np.random.default_rng(7)
+        points = rng.uniform([-2, -1, 4], [2, 1, 9], (150, 3))
+        descriptors = rng.integers(0, 256, (150, 32), dtype=np.uint8)
+        K = np.array([[600., 0, 320], [0, 600, 180], [0, 0, 1]])
+        views = []
+        for i in range(10):
+            pose = np.column_stack((np.eye(3), [-0.2 * i, 0., 0.]))
+            pixels = project(points, pose, K)[0].astype(np.float32)
+            if i == 7:
+                pixels[:20] += [90, 70]
+            views.append(dict(ids=np.arange(150), points=pixels, descriptors=descriptors.copy()))
+        with TemporaryDirectory() as folder:
+            poses, cloud = reconstruct(views, K, dict(keyframe_step=1, min_motion=0.1), Path(folder))
+        self.assertIn(7, poses)
+        self.assertTrue((views[7]['ids'][:20] >= 150).all())
+        self.assertGreater(len(cloud), 100)
 
     def test_backtracking_recovers_opening_frames_and_anchors_frame_zero(self):
         cv2.setRNGSeed(42)

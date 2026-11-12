@@ -1,30 +1,25 @@
 {
   "environment": "cs6524-lab3-local Docker image",
-  "tests_passed": 14,
-  "full_main_exit_code": 0,
-  "selected_method": "SIFT",
+  "tests_passed": 17,
+  "reconstruction_batch_exit_code": 0,
+  "entrypoint": "main.py unchanged; run_experiments rebuilt directly without regenerating unchanged videos",
   "cases_attempted": 12,
   "valid_ply_files": 12,
-  "nonempty_ply_files": 11,
-  "empty_dense_cases": [
-    "b_12d"
-  ],
-  "weak_tracking_cases": [
-    "b_10d",
-    "b_12d"
-  ],
-  "calibration_transfer_validated": false,
+  "nonempty_ply_files": 12,
+  "empty_dense_cases": [],
+  "weak_tracking_cases": [],
+  "calibration_assumed_correct": true,
+  "input_hashes_unchanged": true,
   "checks": [
     "finite PLY coordinates and RGB ranges",
     "orthonormal poses and earliest-camera origin",
     "every consecutive pair attempted",
-    "accepted bundle adjustments reduce RMSE"
+    "accepted bundle adjustments reduce RMSE",
+    "17 geometry and data-association tests"
   ],
   "limitations": [
-    "Different retained point sets: residual reduction partly reflects rejection, not ground-truth accuracy.",
-    "Lab 2 source-camera calibration was checked/refitted; transfer to the actual recording camera remains unverified.",
-    "Clouds remain partial and distorted. b_12d has no verified dense depth; b_10d has only four registered views.",
-    "No invented geometry or per-case detector substitution was used to hide failed sensitivity cases."
+    "Reprojection errors are internal consistency measurements, not ground-truth 3D accuracy.",
+    "Point sets and registered views differ between runs. Clouds remain partial and may contain distortions."
   ],
   "team_file_complete": true,
   "report_still_template": true

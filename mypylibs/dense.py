@@ -10,6 +10,20 @@ from mypylibs.sfm import read_frames
 from mypylibs.triangulation import project, save_ply
 
 
+def remove_outliers(points, colours, voxel_size):
+    """Reject isolated samples and distant islands around the single masked object."""
+    if len(points) < 10:
+        return points, colours
+    distances = cKDTree(points).query(points, k=8)[0][:, 1:].mean(axis=1)
+    median = np.median(distances)
+    deviation = np.median(abs(distances - median))
+    keep = distances <= median + 3 * max(1.4826 * deviation, voxel_size)
+    radius = np.linalg.norm(points - np.median(points, axis=0), axis=1)
+    q1, q3 = np.percentile(radius, [25, 75])
+    keep &= radius <= q3 + 3 * max(q3 - q1, voxel_size)
+    return points[keep], colours[keep]
+
+
 def silhouette_votes(points, poses, masks, K):
     """A real object point should project inside its silhouette in other views."""
     votes = np.zeros(len(points), dtype=int)
@@ -145,13 +159,7 @@ def dense_cloud(video_path, K, D, undistort, config, poses, cloud, output_path):
         weights = np.bincount(inverse)
         xyz = np.column_stack([np.bincount(inverse, weights=xyz[:, j]) / weights for j in range(3)])
         rgb = np.column_stack([np.bincount(inverse, weights=rgb[:, j]) / weights for j in range(3)]).astype(np.uint8)
-        # Isolated samples are usually bad disparities, rather than a supported surface.
-        if len(xyz) >= 10:
-            distances = cKDTree(xyz).query(xyz, k=8)[0][:, 1:].mean(axis=1)
-            median = np.median(distances)
-            deviation = np.median(abs(distances - median))
-            keep = distances <= median + 3 * max(1.4826 * deviation, voxel_size)
-            xyz, rgb = xyz[keep], rgb[keep]
+        xyz, rgb = remove_outliers(xyz, rgb, voxel_size)
     save_ply(output_path, xyz, rgb)
     result = dict(dense_points=len(xyz), pairs=counts,
                   global_check_views=check_frames, before_global_check=before_global,

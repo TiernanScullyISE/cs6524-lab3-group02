@@ -1,16 +1,16 @@
 {
   "a": {
-    "dense_points": 5103,
+    "dense_points": 4992,
     "dense_pairs": 20,
     "pairs_with_depth": 6,
-    "before_global_check": 22876,
-    "after_global_check": 6415
+    "before_global_check": 22407,
+    "after_global_check": 6280
   },
   "b": {
-    "dense_points": 64590,
+    "dense_points": 70931,
     "dense_pairs": 20,
-    "pairs_with_depth": 16,
-    "before_global_check": 70589,
-    "after_global_check": 68973
+    "pairs_with_depth": 15,
+    "before_global_check": 78784,
+    "after_global_check": 78407
   }
 }
