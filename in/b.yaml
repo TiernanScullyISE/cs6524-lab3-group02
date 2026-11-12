@@ -1,0 +1,5 @@
+# ROI is in the rotated 640x360 frames, as fractions [left, top, right, bottom].
+# It focuses detection on the plug; small residual background matches still need RANSAC.
+roi: [0.30, 0.18, 0.70, 0.82]
+keyframe_step: 3
+min_motion: 0.4

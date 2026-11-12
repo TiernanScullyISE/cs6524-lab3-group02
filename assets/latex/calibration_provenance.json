@@ -1,0 +1,27 @@
+{
+  "source": "Lab 2 camera 02 calibration, reused at user request for the same phone model",
+  "calibration_size": [
+    854,
+    480
+  ],
+  "working_size": [
+    640,
+    360
+  ],
+  "orientation": "Portrait frames rotated anticlockwise to landscape; assumed alignment with Lab 2 sensor axes",
+  "limitation": "Lens mode, focus, stabilisation and crop equivalence have not been verified on these recordings.",
+  "hashes": {
+    "K.csv": "4fb2caa4cef8dc7a2240755cbc01963960c449a1472c0c56ecf0195e9a0730eb",
+    "D.csv": "bb3864018124b923637c5ce7db5bb9350f82fc7c751a4a286064dc5ad27f81d0"
+  },
+  "step3": {
+    "a": {
+      "pairs": 1460,
+      "accepted": 537
+    },
+    "b": {
+      "pairs": 234,
+      "accepted": 117
+    }
+  }
+}

@@ -1,0 +1,6 @@
+# Reused at the user's request; not a measured calibration of these recordings.
+calibration_size: [854, 480]
+calibration_source: Lab 2 camera 02, same phone model
+orientation_assumption: portrait frames rotated 90 degrees anticlockwise
+keyframe_step: 10
+min_motion: 0.0
