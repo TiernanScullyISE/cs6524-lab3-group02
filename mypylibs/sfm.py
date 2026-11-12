@@ -54,7 +54,8 @@ def extract_views(video_path, K, D, config, method, undistort=True):
         next_id += len(points)
         for match in match_points(matcher, previous, descriptors):
             ids[match.trainIdx] = previous_ids[match.queryIdx]
-        views.append(dict(ids=ids, points=np.float32([p.pt for p in points]).reshape(-1, 2)))
+        views.append(dict(ids=ids, points=np.float32([p.pt for p in points]).reshape(-1, 2),
+                          descriptors=descriptors))
         previous, previous_ids = descriptors, ids
     if len(views) < 2:
         raise ValueError('Need at least two readable frames')

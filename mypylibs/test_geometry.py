@@ -5,6 +5,7 @@ import cv2
 import numpy as np
 
 from mypylibs.sfm import relative_pose
+from mypylibs.multiview import bundle_adjust
 from mypylibs.triangulation import project, triangulate
 
 
@@ -43,6 +44,24 @@ class GeometryTests(unittest.TestCase):
         parallel_camera = np.column_stack((np.eye(3), [-0.5, 0, 0]))
         _, keep, _ = triangulate(self.p1, self.p1, self.first, parallel_camera, self.K)
         self.assertFalse(keep.any())
+
+    def test_five_view_adjustment_reduces_error_and_keeps_anchors(self):
+        rng = np.random.default_rng(8)
+        views, poses = [], {}
+        for i in range(5):
+            pose = np.column_stack((np.eye(3), [-0.15 * i, 0., 0.]))
+            pixels = project(self.points, pose, self.K)[0] + rng.normal(0, 0.15, (150, 2))
+            views.append(dict(ids=np.arange(150), points=pixels))
+            poses[i] = pose.copy()
+            if i >= 2:
+                poses[i][:, 3] += [0.01, 0.01, 0.005]
+        anchors = [poses[i].copy() for i in range(2)]
+        cloud = dict(enumerate(self.points + rng.normal(0, 0.01, self.points.shape)))
+        result = bundle_adjust(views, poses, cloud, self.K)
+        self.assertTrue(result['accepted'])
+        self.assertLess(result['after_rmse_px'], result['before_rmse_px'])
+        for i in range(2):
+            np.testing.assert_array_equal(poses[i], anchors[i])
 
 
 if __name__ == '__main__':
