@@ -1,10 +1,11 @@
 """Run with python -m unittest mypylibs.test_geometry."""
 import unittest
+from pathlib import Path
 
 import cv2
 import numpy as np
 
-from mypylibs.sfm import relative_pose
+from mypylibs.sfm import load_camera, relative_pose
 from mypylibs.multiview import bundle_adjust
 from mypylibs.triangulation import project, triangulate
 
@@ -33,6 +34,17 @@ class GeometryTests(unittest.TestCase):
 
     def test_no_motion_is_rejected(self):
         self.assertIsNone(relative_pose(self.p1, self.p1, self.K, min_motion=0.4))
+
+    def test_sensitivity_changes_focal_lengths_only(self):
+        inputs = Path(__file__).resolve().parent.parent / 'in'
+        original, D = load_camera(inputs)
+        for factor in (0.8, 1.2):
+            changed, changed_D = load_camera(inputs, factor)
+            expected = original.copy()
+            expected[0, 0] *= factor
+            expected[1, 1] *= factor
+            np.testing.assert_allclose(changed, expected)
+            np.testing.assert_array_equal(changed_D, D)
 
     def test_known_structure_and_reprojection(self):
         points, keep, errors = triangulate(self.p1, self.p2, self.first, self.second, self.K)

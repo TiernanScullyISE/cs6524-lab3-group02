@@ -1,0 +1,19 @@
+{
+  "environment": "cs6524-lab3-local Docker image built from supplied lab01 base",
+  "tests_passed": 7,
+  "full_main_exit_code": 0,
+  "cases": 12,
+  "nonempty_finite_ply_files": 12,
+  "checks": [
+    "PLY vertex counts and RGB ranges",
+    "orthonormal camera rotations",
+    "every consecutive pair attempted",
+    "accepted bundle corrections reduce RMSE"
+  ],
+  "limitations": [
+    "Calibration reused from Lab 2 camera 02 by request; not verified for these recordings",
+    "Dense cloud visual checks show noise and background structure; not a clean plug model",
+    "No global loop closure; independent experiment scales are arbitrary",
+    "Report remains the supplied template; no TEAM.md was added"
+  ]
+}

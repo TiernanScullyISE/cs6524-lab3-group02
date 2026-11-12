@@ -1,14 +1,9 @@
 
 from pathlib import Path
 
-import yaml
-
 from mypylibs.comparison import compare_features
 from mypylibs.features import track_features
-from mypylibs.sfm import load_camera, extract_views, estimate_pairs
-from mypylibs.triangulation import two_view_cloud
-from mypylibs.multiview import reconstruct
-from mypylibs.dense import dense_cloud
+from mypylibs.experiments import run_experiments
 
 
 if __name__ == '__main__':
@@ -16,11 +11,4 @@ if __name__ == '__main__':
     method = compare_features(root / 'in', root / 'out')
     for name in ('a', 'b'):
         track_features(root / 'in' / f'{name}.mp4', root / 'out', method=method)
-        K, D = load_camera(root / 'in')
-        config = yaml.safe_load((root / 'in' / f'{name}.yaml').read_text())
-        views = extract_views(root / 'in' / f'{name}.mp4', K, D, config, method)
-        estimate_pairs(views, K, root / 'out' / f'{name}_10u', config.get('min_motion', 0))
-        two_view_cloud(views, K, root / 'out' / f'{name}_10u')
-        poses, cloud = reconstruct(views, K, config, root / 'out' / f'{name}_10u')
-        dense_cloud(root / 'in' / f'{name}.mp4', K, D, True, config,
-                    poses, cloud, root / 'out' / f'{name}_10u.ply')
+    run_experiments(root, method)

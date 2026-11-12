@@ -12,11 +12,19 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
       
+      - name: Build lab image with OpenCV
+        run: docker build -t cs6524-lab3 .
+
+      - name: Check geometry
+        run: |
+          docker run --rm -v ${{ github.workspace }}:/workspace \
+            cs6524-lab3 python -m unittest mypylibs.test_geometry mypylibs.test_dense
+
       - name: Run Python Script (main.py)
         run: |
           docker run --rm \
           -v ${{ github.workspace }}:/workspace \
-          jfhernandeza/ul-cs6524-cv-python-latex:lab01 python main.py
+          cs6524-lab3 python main.py
       
       - name: Compile LaTeX Document (report.tex)
         run: |
