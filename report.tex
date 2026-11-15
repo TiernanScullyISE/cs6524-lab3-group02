@@ -1,7 +1,4 @@
 \documentclass[conference]{assets/latex/IEEEtran}
-\IEEEoverridecommandlockouts
-% The preceding line is only needed to identify funding in the first footnote. If that is unneeded, please comment it out.
-%Template version as of 6/27/2024
 
 \usepackage{amsmath,amssymb,amsfonts}
 \usepackage{algorithmic}
@@ -9,98 +6,142 @@
 \usepackage{textcomp}
 \usepackage{xcolor}
 \usepackage[backend=biber,style=numeric]{biblatex}
-\addbibresource{assets/latex/report.bib} 
+\addbibresource{assets/latex/report.bib}
 
- \graphicspath{{assets/latex/}}
+\graphicspath{{assets/latex/}}
 
 \begin{document}
 
 \title{CS6524 Computer Vision Lab. 3\\ Structure from Motion}
 
-\author{\IEEEauthorblockN{1\textsuperscript{st} Given Name Surname}
-\IEEEauthorblockA{\textit{dept. name of organization (of Aff.)} \\
-\textit{name of organization (of Aff.)}\\
-City, Country \\
-email address or ORCID}
+\author{\IEEEauthorblockN{1\textsuperscript{st} Frederick Sheppard}
+\IEEEauthorblockA{\textit{23361433} \\
+\textit{4th Year ISE}}
 \and
-\IEEEauthorblockN{2\textsuperscript{nd} Given Name Surname}
-\IEEEauthorblockA{\textit{dept. name of organization (of Aff.)} \\
-\textit{name of organization (of Aff.)}\\
-City, Country \\
-email address or ORCID}
+\IEEEauthorblockN{2\textsuperscript{nd} Oluwajomiloju Olajitan}
+\IEEEauthorblockA{\textit{23373326} \\
+\textit{4th Year ISE}}
 \and
-\IEEEauthorblockN{2\textsuperscript{nd} Given Name Surname}
-\IEEEauthorblockA{\textit{dept. name of organization (of Aff.)} \\
-\textit{name of organization (of Aff.)}\\
-City, Country \\
-email address or ORCID}
+\IEEEauthorblockN{3\textsuperscript{rd} Tiernan Scully}
+\IEEEauthorblockA{\textit{23365528} \\
+\textit{4th Year ISE}}
 }
 
 \maketitle
 
 \begin{abstract}
-Describe in few words the work done, the lessons learned, and results.
+TODO
 \end{abstract}
 
-\section{Introduction}
-This document contains some examples of basic {\LaTeX} functions.
 
-\subsection{Lists}
 
-List can be bulleted\dots
-\begin{itemize}
-\item First
-\item Second
-\item Third
-\end{itemize}
 
-Or enumerated
+\section{Methodology}\label{sec:methodology}
 
-\begin{enumerate}
-\item First
-\item Second
-\item Third
-\end{enumerate}
+\subsection{Input and Calibration}
+Video (a) moves the camera around a plug adaptor and video (b) turns the
+plug in front of a still camera. Frames are rotated to landscape and
+resized to $640\times360$. We reuse the Lab 2 calibration of the same
+phone model, scaling $K$ to the new resolution. The original distortion
+fit folded near the image corners, so we refit it with one radial
+coefficient.
 
-\subsection{Equations}
+\subsection{Feature Tracking}
+SIFT~\cite{lowe2004sift} had a higher RANSAC inlier fraction than ORB on
+both videos (0.99 against 0.90 on (a)) and gave half the reprojection
+error in a full run, so we use it throughout. We keep 2000 keypoints per
+frame, match consecutive frames with Lowe's ratio test at 0.75, and pass
+track IDs along matched points. In (b) most matches were on the static
+background, so we restrict detection to a region around the plug and
+drop matches that move less than 0.4 pixels.
 
-Equations can have their own environment,
+\subsection{Pose and Triangulation}
+For each consecutive pair we estimate $E$ with the five point
+algorithm~\cite{nister2004five} in RANSAC and recover $R$ and $t$ with a
+cheirality check. Points are triangulated with the first camera at the
+origin and kept if they are in front of both cameras, reproject within
+2 pixels, and have at least 0.5 degrees between their rays.
+
+\subsection{Extending to N Frames}
+Consecutive frames barely move, so we work on keyframes (every 10th frame
+for (a), every 3rd for (b)). New keyframes are placed against the map
+with PnP RANSAC and add new triangulated points. Every 5 keyframes we run
+bundle adjustment~\cite{triggs2000bundle} over the last 5, and once over
+all keyframes at the end, minimising
 \begin{equation}
-a+b=\gamma\label{eq}
+\sum_{i,j} \rho\left(\left\lVert x_{ij} - \pi(K, R_i, t_i, X_j)\right\rVert^2\right)
 \end{equation}
-and be reference (Equation~\ref{eq}), or can be inline and blend in the text like this: $\sum_{i=0}^{N}x_i$, like any other word.
+with a soft L1 loss $\rho$. Points seen in fewer than 3 keyframes or with
+median error above 1.5 pixels are removed.
 
-\subsection{Figures and Tables}
+\subsection{Dense Reconstruction}
+We pick up to 20 keyframe pairs, rectify them using their poses, and
+compute disparity with semi-global matching~\cite{hirschmuller2008sgm}.
+Points are kept if they land inside the segmented plug in most views and
+at least two pairs agree on their depth within 2\%. Points in the same
+voxel are averaged and saved as a PLY.
 
-\begin{table}
-\caption{Table Type Styles}
-\begin{center}
-\begin{tabular}{|c|c|c|c|}
+\subsection{Sensitivity Analysis}
+The full pipeline is rerun with $f_x, f_y$ scaled by 0.8, 1.0 and 1.2,
+with and without undistortion, using a fixed random seed so only the
+camera model changes.
+
+\section{Results}\label{sec:results}
+Table~\ref{tab:results} shows the twelve runs. Video (a) registered all 147
+keyframes in every run and kept around 16,000 sparse points. Its median
+reprojection error was lowest at a focal factor of 1.0 (0.20 pixels
+undistorted, 0.18 distorted) and rose at both 0.8 and 1.2, which suggests the
+reused $K$ is close to the true focal length. Removing undistortion did not
+increase the error, since $k_1$ is small and bundle adjustment can absorb some
+of the lens error into the poses and points. These errors are measured on the
+points the pipeline kept, so they show consistency, not 3D accuracy.
+
+Video (b) is much weaker. At most 63 of 79 keyframes were registered and only
+127 to 331 sparse points survived, mostly on the pins and cable socket. At a
+factor of 1.0 the map only covers frames 39 to 210, so the full rotation is not
+recovered. The dense point count also does not follow quality: b\_12d has the
+most dense points but the fewest registered views, and a\_12u kept only 854
+points while a\_12d kept 12,101 from almost the same sparse map.
+
+\begin{table}[htbp]
+\caption{Sensitivity runs. Views are registered keyframes, error is median reprojection error in pixels.}
+\label{tab:results}
+\centering
+\begin{tabular}{l r r r r}
 \hline
-\textbf{Table}&\multicolumn{3}{|c|}{\textbf{Table Column Head}} \\
-\cline{2-4} 
-\textbf{Head} & \textbf{\textit{Table column subhead}}& \textbf{\textit{Subhead}}& \textbf{\textit{Subhead}} \\
+Run & Views & Sparse & Dense & Error \\
 \hline
-copy& More table copy$^{\mathrm{a}}$& &  \\
+a\_08u & 147 & 15,440 & 3,666 & 0.26 \\
+a\_08d & 147 & 16,199 & 6,904 & 0.22 \\
+a\_10u & 147 & 16,946 & 14,570 & 0.20 \\
+a\_10d & 147 & 16,174 & 15,633 & 0.18 \\
+a\_12u & 147 & 16,750 & 854 & 0.22 \\
+a\_12d & 147 & 15,991 & 12,101 & 0.20 \\
+b\_08u & 61 & 312 & 27,030 & 0.26 \\
+b\_08d & 50 & 235 & 61,364 & 0.25 \\
+b\_10u & 57 & 258 & 78,455 & 0.25 \\
+b\_10d & 63 & 331 & 67,837 & 0.26 \\
+b\_12u & 54 & 209 & 20,358 & 0.29 \\
+b\_12d & 27 & 127 & 99,215 & 0.32 \\
 \hline
-\multicolumn{4}{l}{$^{\mathrm{a}}$Sample of a Table footnote.}
 \end{tabular}
-\label{tab1}
-\end{center}
 \end{table}
 
-\begin{figure}
-% Uncomment the line below to include an image from a source file
-\centerline{\includegraphics{fig1.png}}
-\caption{Example of a figure caption.}
-\label{fig}
-\end{figure}
+\section{Discussion \& Failure Analysis}\label{sec:discussion}
 
-They appear by default on top of the text, and you reference like this: Figure~\ref{fig} and Table~\ref{tab1}.
 
-\subsection{Citations}
 
-If you need to cite external sources, use the \texttt{assets/latex/report.bib} file. As an example, here's how you cite the textbook~\cite{foundationsCVbook}.
+\section{Conclusion}
+We built a full structure from motion pipeline that tracks SIFT features,
+estimates poses from the essential matrix, corrects drift with bundle
+adjustment and produces dense point clouds for both videos under six camera
+settings. The camera orbit worked well, registering every keyframe with sub
+pixel error, while the spinning object was limited by its white surface and
+static background. The main lessons were that consecutive frames give too
+small a baseline for reliable poses, and that a low reprojection error does not
+guarantee a correct shape. With more time, calibrating the actual phone and
+segmenting the object before feature detection would be the most useful
+improvements.
 
 \printbibliography
 
