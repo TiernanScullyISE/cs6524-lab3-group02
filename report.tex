@@ -6,7 +6,7 @@
 \usepackage{textcomp}
 \usepackage{xcolor}
 \usepackage[backend=biber,style=numeric]{biblatex}
-\addbibresource{assets/latex/report.bib}
+\addbibresource{report.bib}
 
 \graphicspath{{assets/latex/}}
 
@@ -30,11 +30,8 @@
 \maketitle
 
 \begin{abstract}
-TODO
+We build a full structure-from-motion pipeline that tracks SIFT features, estimates poses from the essential matrix, corrects drift with bundle adjustment and produces dense point clouds from input videos. We discuss our methodology, present our results, and discuss weaknesses in the implementation and how it could be improved.
 \end{abstract}
-
-
-
 
 \section{Methodology}\label{sec:methodology}
 
@@ -90,8 +87,7 @@ camera model changes.
 Table~\ref{tab:results} shows the twelve runs. Video (a) registered all 147
 keyframes in every run and kept around 16,000 sparse points. Its median
 reprojection error was lowest at a focal factor of 1.0 (0.20 pixels
-undistorted, 0.18 distorted) and rose at both 0.8 and 1.2, which suggests the
-reused $K$ is close to the true focal length. Removing undistortion did not
+undistorted, 0.18 distorted). Removing undistortion did not
 increase the error, since $k_1$ is small and bundle adjustment can absorb some
 of the lens error into the poses and points. These errors are measured on the
 points the pipeline kept, so they show consistency, not 3D accuracy.
@@ -129,6 +125,28 @@ b\_12d & 27 & 127 & 99,215 & 0.32 \\
 
 \section{Discussion \& Failure Analysis}\label{sec:discussion}
 
+\begin{figure*}[t]\centering
+\includegraphics[width=\textwidth]{assets/trajectory.png}
+\caption{Recovered camera centres (coloured by frame) and sparse map, viewed
+from above. (a) closes a full orbit with visible drift between first and last
+frames; (b) recovers only part of the rotation.}
+\label{fig:trajectory}
+\end{figure*}
+
+The results outlined in section \ref{sec:results} highlight some issues in our methodology. Figure \ref{fig:trajectory} shows the points used in each analysis. Video (a) consists of a full revolution, but the camera drifts across frames, especially noticeable between the first and last frames. This is due to capturing the scene by hand. A more robust capturing methodology, or a pipeline step to handle loop closing, would likely improve results.
+
+In the same figure, we can see that video (b) was captured incorrectly. The object does not complete a full revolution, only undergoing a 150\textdegree \hspace{1pt} rotation. This was simple experimental error that we did not notice when taking the videos. As a result, any results based on video (b) are will have inflated error values and decreased performance. Even if the video was taken again with a full rotation, the pipeline would likely still struggle.
+
+\begin{figure*}[t]\centering
+\includegraphics[width=\textwidth]{assets/features.png}
+\caption{SIFT detections on undistorted frames: tracked (green), new (orange),
+detection ROI (yellow) and object mask (magenta). In (a) the textured floor
+supplies nearly all features; in (b) the white plug yields few.}
+\label{fig:features}
+\end{figure*}
+
+Aside from the decreased performance in (b) due to missing frames, we can see from Figures \ref{fig:trajectory} and \ref{fig:features} that much of (a)'s tracking comes from the textured background, not from the object itself. The point cloud shows a spread, radial pattern matching the floor, and the feature map shows many points tracking the floor instead of the plug. The background is an ideal target that SIFT is able to track well, whereas the plug is monochromatic, shiny, and has features that are difficult to make out even by eye. This indicates that our pipeline may perform poorly without an ideal background, and this is supported by the performance on video (b). The shiny reflections on the plate create false points, and very few keypoints are placed on the plug itself. 
+
 
 
 \section{Conclusion}
@@ -137,11 +155,11 @@ estimates poses from the essential matrix, corrects drift with bundle
 adjustment and produces dense point clouds for both videos under six camera
 settings. The camera orbit worked well, registering every keyframe with sub
 pixel error, while the spinning object was limited by its white surface and
-static background. The main lessons were that consecutive frames give too
+static background, along with issues in capturing the data itself. The main lessons were that consecutive frames give too
 small a baseline for reliable poses, and that a low reprojection error does not
-guarantee a correct shape. With more time, calibrating the actual phone and
-segmenting the object before feature detection would be the most useful
-improvements.
+guarantee a correct shape. 
+
+Overall, with more time, we would love to run the pipeline on a variety of compositions. A mixture of textured and plain backgrounds, matte and shiny objects, and colourful and monochromatic scenes would reveal empirically the weaknesses of the pipeline and where it may be improved. For this report, we cannot be sure if poor performance is due to capturing issues, the nature of the object and scene, or the pipeline itself. Further experimentation would isolate these into separate, measurable pipelines. Areas that could benefit from improvement based on these findings include auto loop closing, better input capturing techniques (such as using a matte turntable or a gimble setup), and object segmentation, which would all hopefully improve the quality of the produced point cloud.
 
 \printbibliography
 
