@@ -6,7 +6,7 @@
 \usepackage{textcomp}
 \usepackage{xcolor}
 \usepackage[backend=biber,style=numeric]{biblatex}
-\addbibresource{report.bib}
+\addbibresource{assets/latex/report.bib}
 
 \graphicspath{{assets/latex/}}
 
@@ -126,7 +126,7 @@ b\_12d & 27 & 127 & 99,215 & 0.32 \\
 \section{Discussion \& Failure Analysis}\label{sec:discussion}
 
 \begin{figure*}[t]\centering
-\includegraphics[width=\textwidth]{assets/trajectory.png}
+\includegraphics[width=\textwidth]{trajectory.png}
 \caption{Recovered camera centres (coloured by frame) and sparse map, viewed
 from above. (a) closes a full orbit with visible drift between first and last
 frames; (b) recovers only part of the rotation.}
@@ -138,7 +138,7 @@ The results outlined in section \ref{sec:results} highlight some issues in our m
 In the same figure, we can see that video (b) was captured incorrectly. The object does not complete a full revolution, only undergoing a 150\textdegree \hspace{1pt} rotation. This was simple experimental error that we did not notice when taking the videos. As a result, any results based on video (b) are will have inflated error values and decreased performance. Even if the video was taken again with a full rotation, the pipeline would likely still struggle.
 
 \begin{figure*}[t]\centering
-\includegraphics[width=\textwidth]{assets/features.png}
+\includegraphics[width=\textwidth]{features.png}
 \caption{SIFT detections on undistorted frames: tracked (green), new (orange),
 detection ROI (yellow) and object mask (magenta). In (a) the textured floor
 supplies nearly all features; in (b) the white plug yields few.}
